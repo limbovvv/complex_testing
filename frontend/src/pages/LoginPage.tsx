@@ -5,6 +5,11 @@ import '../styles/login.css'
 
 export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(true)
+  const [lastName, setLastName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [middleName, setMiddleName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -14,9 +19,20 @@ export default function LoginPage() {
     setError('')
     try {
       const path = isRegister ? '/auth/register' : '/auth/login'
+      const payload = isRegister
+        ? {
+            last_name: lastName,
+            first_name: firstName,
+            middle_name: middleName || null,
+            phone,
+            faculty,
+            email,
+            password
+          }
+        : { email, password }
       const data = await apiFetch(path, {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify(payload)
       })
       setToken(data.access_token)
       navigate('/exam')
@@ -31,6 +47,19 @@ export default function LoginPage() {
         <h1>Вступительный экзамен</h1>
         <p className="lead">Чтобы начать тестирование, пройдите регистрацию или войдите в аккаунт.</p>
         <p className="mode">{isRegister ? 'Регистрация' : 'Вход'}</p>
+        {isRegister && (
+          <>
+            <input placeholder="Фамилия" value={lastName} onChange={e => setLastName(e.target.value)} />
+            <input placeholder="Имя" value={firstName} onChange={e => setFirstName(e.target.value)} />
+            <input placeholder="Отчество (если есть)" value={middleName} onChange={e => setMiddleName(e.target.value)} />
+            <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
+            <select value={faculty} onChange={e => setFaculty(e.target.value)}>
+              <option value="Факультет связи и автоматизированное управление войсками">
+                Факультет связи и автоматизированное управление войсками
+              </option>
+            </select>
+          </>
+        )}
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         {error && <div className="error">{error}</div>}

@@ -10,7 +10,16 @@ async def seed():
     async with AsyncSessionLocal() as session:
         res = await session.execute(select(User).where(User.email == "admin@example.com"))
         if not res.scalar_one_or_none():
-            admin = User(email="admin@example.com", password_hash=hash_password("admin123"), is_admin=True)
+            admin = User(
+                email="admin@example.com",
+                password_hash=hash_password("admin123"),
+                last_name="Администратор",
+                first_name="Системы",
+                middle_name=None,
+                phone="+70000000000",
+                faculty="Факультет связи и автоматизированное управление войсками",
+                is_admin=True,
+            )
             session.add(admin)
 
         # Questions

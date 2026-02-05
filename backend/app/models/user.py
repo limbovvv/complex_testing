@@ -10,6 +10,11 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
+    last_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    first_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    middle_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    phone: Mapped[str | None] = mapped_column(String(32), unique=True, nullable=True)
+    faculty: Mapped[str | None] = mapped_column(String(255), nullable=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     attempts = relationship("ExamAttempt", back_populates="user")
