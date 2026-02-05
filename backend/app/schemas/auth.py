@@ -1,9 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class RegisterIn(BaseModel):
-    email: EmailStr
-    password: str
     last_name: str
     first_name: str
     middle_name: str | None = None
@@ -12,8 +10,7 @@ class RegisterIn(BaseModel):
 
 
 class LoginIn(BaseModel):
-    email: EmailStr
-    password: str
+    phone: str
 
 
 class TokenOut(BaseModel):

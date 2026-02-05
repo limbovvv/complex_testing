@@ -10,8 +10,6 @@ export default function LoginPage() {
   const [middleName, setMiddleName] = useState('')
   const [phone, setPhone] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
@@ -25,11 +23,9 @@ export default function LoginPage() {
             first_name: firstName,
             middle_name: middleName || null,
             phone,
-            faculty,
-            email,
-            password
+            faculty
           }
-        : { email, password }
+        : { phone }
       const data = await apiFetch(path, {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -60,8 +56,9 @@ export default function LoginPage() {
             </select>
           </>
         )}
-        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+        {!isRegister && (
+          <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
+        )}
         {error && <div className="error">{error}</div>}
         <button onClick={submit}>{isRegister ? 'Зарегистрироваться' : 'Войти'}</button>
         <button className="link" onClick={() => setIsRegister(v => !v)}>
