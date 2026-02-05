@@ -4,7 +4,7 @@ import { apiFetch, setToken } from '../api/client'
 import '../styles/login.css'
 
 export default function LoginPage() {
-  const [isRegister, setIsRegister] = useState(false)
+  const [isRegister, setIsRegister] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
