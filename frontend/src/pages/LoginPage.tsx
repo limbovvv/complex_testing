@@ -11,10 +11,12 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   async function submit() {
     setError('')
+    setLoading(true)
     try {
       const path = isRegister ? '/auth/register' : '/auth/login'
       const payload = isRegister
@@ -31,9 +33,25 @@ export default function LoginPage() {
         body: JSON.stringify(payload)
       })
       setToken(data.access_token)
+      if (isRegister) {
+        try {
+          await apiFetch('/exam/start', { method: 'POST' })
+        } catch (_) {
+          // Ignore: if attempt already exists, user will still open /exam.
+        }
+      }
       navigate('/exam')
     } catch (e: any) {
-      setError(e.message)
+      let message = e.message || 'Ошибка'
+      try {
+        const parsed = JSON.parse(message)
+        message = parsed.detail || message
+      } catch (_) {
+        // Keep raw message
+      }
+      setError(message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -60,8 +78,8 @@ export default function LoginPage() {
           <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
         )}
         {error && <div className="error">{error}</div>}
-        <button onClick={submit}>{isRegister ? 'Зарегистрироваться' : 'Войти'}</button>
-        <button className="link" onClick={() => setIsRegister(v => !v)}>
+        <button onClick={submit} disabled={loading}>{loading ? 'Подождите...' : (isRegister ? 'Зарегистрироваться' : 'Войти')}</button>
+        <button className="link" onClick={() => setIsRegister(v => !v)} disabled={loading}>
           {isRegister ? 'Уже есть аккаунт' : 'Создать аккаунт'}
         </button>
       </div>
