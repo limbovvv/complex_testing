@@ -35,6 +35,11 @@ export default function LoginPage() {
         body: JSON.stringify(payload)
       })
       setToken(data.access_token)
+      const me = await apiFetch('/auth/me')
+      if (me?.is_admin) {
+        navigate('/admin')
+        return
+      }
       if (isRegister) {
         try {
           await apiFetch('/exam/start', { method: 'POST' })
