@@ -18,6 +18,8 @@ type ExamState = {
 
 export default function ExamPage() {
   const [state, setState] = useState<ExamState | null>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [showInstructions, setShowInstructions] = useState(false)
   const [block, setBlock] = useState<'prog' | 'math' | 'ru'>('prog')
   const [index, setIndex] = useState(0)
   const [timeLeft, setTimeLeft] = useState('')
@@ -37,6 +39,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     loadState()
+    apiFetch('/auth/me').then(setProfile).catch(() => null)
   }, [])
 
   useEffect(() => {
@@ -107,11 +110,33 @@ export default function ExamPage() {
   }
 
   if (!state) {
+    const fio = [profile?.last_name, profile?.first_name, profile?.middle_name].filter(Boolean).join(' ')
     return (
-      <div className="exam-empty">
-        <h2>Экзамен</h2>
-        <p>У вас нет попытки. Нажмите «Начать экзамен».</p>
-        <button onClick={startExam}>Начать экзамен</button>
+      <div className="prestart-page">
+        <div className="prestart-header">
+          <div className="fio">{fio || 'Пользователь'}</div>
+        </div>
+        <div className="prestart-card">
+          <h2>Перед началом экзамена</h2>
+          <p>Сначала ознакомьтесь с инструкцией по всем блокам.</p>
+          {!showInstructions && (
+            <button className="primary-btn" onClick={() => setShowInstructions(true)}>
+              Полная инструкция по каждому блоку
+            </button>
+          )}
+          {showInstructions && (
+            <div className="instructions">
+              <h3>Информатика (5 задач)</h3>
+              <p>Решайте задачи в Python/C++/JavaScript. Ответ принимается по итоговой сдаче.</p>
+              <h3>Математика (5 вопросов)</h3>
+              <p>Выберите один правильный вариант в каждом вопросе.</p>
+              <h3>Русский язык (5 вопросов)</h3>
+              <p>Выберите один правильный вариант в каждом вопросе.</p>
+              <p>Время: 60 минут. После сдачи редактирование запрещено.</p>
+              <button className="primary-btn" onClick={startExam}>Начать тестирование</button>
+            </div>
+          )}
+        </div>
       </div>
     )
   }

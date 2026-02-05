@@ -16,6 +16,45 @@
 .nav { display: flex; justify-content: space-between; margin-top: 16px; }
 .exam-empty { padding: 40px; }
 .error { color: var(--primary); margin-top: 10px; }
+
+.prestart-page {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.prestart-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.prestart-header .fio {
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.prestart-card {
+  max-width: 760px;
+  margin: 48px auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.instructions {
+  margin-top: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.primary-btn {
+  margin-top: 12px;
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  padding: 10px 14px;
+  border-radius: 10px;
+}
 @media (max-width: 900px) {
   .content { grid-template-columns: 1fr; }
   .sidebar { flex-direction: row; flex-wrap: wrap; }

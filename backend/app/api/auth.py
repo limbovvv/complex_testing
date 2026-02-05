@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from app.api.deps import get_current_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.auth import RegisterIn, LoginIn, TokenOut
@@ -45,3 +46,16 @@ async def login(data: LoginIn, session: AsyncSession = Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     token = create_access_token(str(user.id))
     return TokenOut(access_token=token)
+
+
+@router.get("/me")
+async def me(current: User = Depends(get_current_user)):
+    return {
+        "id": current.id,
+        "last_name": current.last_name,
+        "first_name": current.first_name,
+        "middle_name": current.middle_name,
+        "phone": current.phone,
+        "faculty": current.faculty,
+        "is_admin": current.is_admin,
+    }
