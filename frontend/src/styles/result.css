@@ -1,5 +1,5 @@
 .result-page { padding: 24px; }
 .summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
-.section { background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-.ok { color: #16a34a; }
-.wa { color: #b91c1c; }
+.section { background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border); }
+.ok { color: var(--primary-dark); }
+.wa { color: var(--primary); }

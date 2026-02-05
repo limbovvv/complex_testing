@@ -29,7 +29,8 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <h1>Вступительный экзамен</h1>
-        <p>{isRegister ? 'Регистрация' : 'Вход'}</p>
+        <p className="lead">Чтобы начать тестирование, пройдите регистрацию или войдите в аккаунт.</p>
+        <p className="mode">{isRegister ? 'Регистрация' : 'Вход'}</p>
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         {error && <div className="error">{error}</div>}

@@ -1,4 +1,4 @@
 .admin-page { padding: 24px; }
-.section { background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-.row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+.section { background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border); }
+.row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }

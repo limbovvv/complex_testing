@@ -1,4 +1,33 @@
 * { box-sizing: border-box; }
-body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6fb; color: #222; }
-button { cursor: pointer; }
-input, textarea, select { width: 100%; padding: 8px; margin: 6px 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fff5f5;
+  --text: #1f1f1f;
+  --muted: #6b6b6b;
+  --primary: #cc1f1f;
+  --primary-dark: #a51515;
+  --border: #f0d7d7;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}

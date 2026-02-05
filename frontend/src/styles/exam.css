@@ -1,21 +1,21 @@
 .exam-layout { display: flex; flex-direction: column; height: 100vh; }
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0f172a; color: #fff; }
-.topbar .submit { background: #16a34a; border: none; color: white; padding: 8px 16px; border-radius: 6px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #fff; color: var(--text); border-bottom: 1px solid var(--border); }
+.topbar .submit { background: var(--primary); border: none; color: white; padding: 8px 16px; border-radius: 8px; }
 .content { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 52px); }
-.sidebar { background: #111827; color: white; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.sidebar .block { padding: 10px; background: #1f2937; border-radius: 6px; display: flex; justify-content: space-between; cursor: pointer; }
-.sidebar .block.active { background: #2563eb; }
+.sidebar { background: #fff; color: var(--text); padding: 16px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid var(--border); }
+.sidebar .block { padding: 10px; background: #fff7f7; border-radius: 8px; display: flex; justify-content: space-between; cursor: pointer; border: 1px solid var(--border); }
+.sidebar .block.active { background: #ffe9e9; border-color: var(--primary); color: var(--primary-dark); }
 .sidebar .numbers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
-.sidebar .numbers button { padding: 8px; border: none; border-radius: 6px; }
-.sidebar .numbers .done { background: #22c55e; color: #fff; }
+.sidebar .numbers button { padding: 8px; border-radius: 8px; background: #fff; }
+.sidebar .numbers .done { background: #ffdede; color: var(--primary-dark); border-color: #f3aaaa; }
 .sidebar .progress { margin-top: auto; }
 .main { padding: 20px; overflow: auto; }
-.question { background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; }
+.question { background: white; padding: 16px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
 .options label { display: block; margin: 8px 0; }
 .prog-panel select { width: 200px; }
 .nav { display: flex; justify-content: space-between; margin-top: 16px; }
 .exam-empty { padding: 40px; }
-.error { color: #b91c1c; margin-top: 10px; }
+.error { color: var(--primary); margin-top: 10px; }
 @media (max-width: 900px) {
   .content { grid-template-columns: 1fr; }
   .sidebar { flex-direction: row; flex-wrap: wrap; }
