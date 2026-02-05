@@ -29,6 +29,43 @@
 
 Данные сохраняются между перезапусками контейнеров через volume `nikolaev_pgdata`.
 
+## Схема БД
+Основные таблицы и связи:
+
+- `users`  
+  Поля: `id`, `email`, `password_hash`, `is_admin`  
+  Связь: `users (1) -> (N) exam_attempts`
+
+- `exam_attempts`  
+  Поля: `id`, `user_id`, `status`, `started_at`, `ends_at`, `submitted_at`, `score_total`, `score_blocks`  
+  Связи:  
+  - `exam_attempts (1) -> (N) attempt_answers`  
+  - `exam_attempts (1) -> (N) attempt_prog`
+
+- `questions`  
+  Поля: `id`, `subject`, `question`, `options`, `correct_index`, `points`, `published`  
+  Используется в тестовых блоках (математика/русский).
+
+- `attempt_answers`  
+  Поля: `id`, `attempt_id`, `question_id`, `selected_index`, `is_correct`  
+  Связи:  
+  - `attempt_answers (N) -> (1) exam_attempts`  
+  - `attempt_answers (N) -> (1) questions`
+
+- `prog_tasks`  
+  Поля: `id`, `title`, `statement`, `points`, `published`  
+  Связь: `prog_tasks (1) -> (N) prog_testcases`
+
+- `prog_testcases`  
+  Поля: `id`, `task_id`, `input_data`, `output_data`, `is_hidden`  
+  Хранят visible/hidden тесты для мини-джаджа.
+
+- `attempt_prog`  
+  Поля: `id`, `attempt_id`, `task_id`, `language`, `code`, `verdicts`, `is_correct`  
+  Связи:  
+  - `attempt_prog (N) -> (1) exam_attempts`  
+  - `attempt_prog (N) -> (1) prog_tasks`
+
 ## Запуск (Podman)
 Требования:
 - `podman`
