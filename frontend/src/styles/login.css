@@ -33,6 +33,12 @@
   font-weight: 600;
 }
 
+.login-card .admin-hint {
+  margin-top: 8px;
+  color: var(--primary-dark);
+  font-size: 13px;
+}
+
 .login-card .error {
   color: var(--primary);
   margin: 8px 0;

@@ -10,7 +10,9 @@ class RegisterIn(BaseModel):
 
 
 class LoginIn(BaseModel):
-    phone: str
+    phone: str | None = None
+    login: str | None = None
+    password: str | None = None
 
 
 class TokenOut(BaseModel):

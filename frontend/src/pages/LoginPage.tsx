@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [middleName, setMiddleName] = useState('')
   const [phone, setPhone] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
+  const [login, setLogin] = useState('admin')
+  const [password, setPassword] = useState('admin')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -27,7 +29,7 @@ export default function LoginPage() {
             phone,
             faculty
           }
-        : { phone }
+        : (phone ? { phone } : { login, password })
       const data = await apiFetch(path, {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -75,7 +77,12 @@ export default function LoginPage() {
           </>
         )}
         {!isRegister && (
-          <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
+          <>
+            <input placeholder="Номер телефона (для пользователя)" value={phone} onChange={e => setPhone(e.target.value)} />
+            <div className="admin-hint">Для администратора: логин <b>admin</b>, пароль <b>admin</b></div>
+            <input placeholder="Логин администратора" value={login} onChange={e => setLogin(e.target.value)} />
+            <input placeholder="Пароль администратора" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+          </>
         )}
         {error && <div className="error">{error}</div>}
         <button onClick={submit} disabled={loading}>{loading ? 'Подождите...' : (isRegister ? 'Зарегистрироваться' : 'Войти')}</button>
