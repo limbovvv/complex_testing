@@ -58,6 +58,12 @@ export default function ExamPage() {
     return () => clearInterval(interval)
   }, [state])
 
+  useEffect(() => {
+    if (state && state.status !== 'in_progress') {
+      navigate('/result')
+    }
+  }, [state, navigate])
+
   async function startExam() {
     const data = await apiFetch('/exam/start', { method: 'POST' })
     setState(data)
@@ -141,14 +147,7 @@ export default function ExamPage() {
     )
   }
 
-  if (state.status !== 'in_progress') {
-    return (
-      <div className="exam-empty">
-        <h2>Экзамен завершен</h2>
-        <button onClick={() => navigate('/result')}>Перейти к результатам</button>
-      </div>
-    )
-  }
+  if (state.status !== 'in_progress') return null
 
   const items = block === 'prog' ? state.prog_tasks : block === 'math' ? state.math_questions : state.ru_questions
   const current = items[index]

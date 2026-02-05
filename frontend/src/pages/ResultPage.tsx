@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../api/client'
 import '../styles/result.css'
 
@@ -14,40 +15,63 @@ type Result = {
 export default function ResultPage() {
   const [result, setResult] = useState<Result | null>(null)
   const [state, setState] = useState<any>(null)
-  const [error, setError] = useState('')
+  const [loadingText, setLoadingText] = useState('Идет проверка решений...')
+  const timerRef = useRef<number | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    async function load() {
+    let active = true
+
+    async function loadOnce() {
       try {
         const r = await apiFetch('/exam/result')
         const s = await apiFetch('/exam/state')
+        if (!active) return
         setResult(r)
         setState(s)
-      } catch (e: any) {
-        setError('Результаты еще не готовы')
+        setLoadingText('')
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+          timerRef.current = null
+        }
+      } catch (_e) {
+        if (active) setLoadingText('Идет проверка решений... Обновляем автоматически.')
       }
     }
-    load()
+
+    loadOnce()
+    timerRef.current = window.setInterval(loadOnce, 2000)
+
+    return () => {
+      active = false
+      if (timerRef.current) clearInterval(timerRef.current)
+      timerRef.current = null
+    }
   }, [])
 
-  if (error) return <div className="result-page">{error}</div>
-  if (!result || !state) return <div className="result-page">Загрузка...</div>
+  function acknowledge() {
+    localStorage.removeItem('token')
+    navigate('/login')
+  }
+
+  if (!result || !state) return <div className="result-page"><div className="wait-box">{loadingText}</div></div>
 
   return (
     <div className="result-page">
-      <h2>Результаты</h2>
+      <h2>Результаты экзамена</h2>
       <div className="summary">
-        <div>Общий балл: {result.score_total}</div>
-        <div>Информатика: {result.score_blocks.prog || 0}</div>
-        <div>Математика: {result.score_blocks.math || 0}</div>
-        <div>Русский: {result.score_blocks.ru || 0}</div>
+        <div className="score-card total">Общий балл: {result.score_total}</div>
+        <div className="score-card">Информатика: {result.score_blocks.prog || 0}</div>
+        <div className="score-card">Математика: {result.score_blocks.math || 0}</div>
+        <div className="score-card">Русский: {result.score_blocks.ru || 0}</div>
       </div>
 
       <div className="section">
         <h3>Информатика</h3>
-        {state.prog_tasks.map((t: any) => (
-          <div key={t.id} className={result.per_task[t.id] ? 'ok' : 'wa'}>
-            {t.title}: {result.per_task[t.id] ? 'верно' : 'неверно'}
+        {state.prog_tasks.map((t: any, i: number) => (
+          <div key={t.id} className={`row ${result.per_task[t.id] ? 'ok' : 'wa'}`}>
+            <span>Задача {i + 1}: {t.title}</span>
+            <b>{result.per_task[t.id] ? 'Верно' : 'Неверно'}</b>
           </div>
         ))}
       </div>
@@ -55,20 +79,24 @@ export default function ResultPage() {
       <div className="section">
         <h3>Математика</h3>
         {state.math_questions.map((q: any, i: number) => (
-          <div key={q.id} className={result.per_question[q.id] ? 'ok' : 'wa'}>
-            Вопрос {i + 1}: {result.per_question[q.id] ? 'верно' : 'неверно'}
+          <div key={q.id} className={`row ${result.per_question[q.id] ? 'ok' : 'wa'}`}>
+            <span>Вопрос {i + 1}</span>
+            <b>{result.per_question[q.id] ? 'Верно' : 'Неверно'}</b>
           </div>
         ))}
       </div>
 
       <div className="section">
-        <h3>Русский</h3>
+        <h3>Русский язык</h3>
         {state.ru_questions.map((q: any, i: number) => (
-          <div key={q.id} className={result.per_question[q.id] ? 'ok' : 'wa'}>
-            Вопрос {i + 1}: {result.per_question[q.id] ? 'верно' : 'неверно'}
+          <div key={q.id} className={`row ${result.per_question[q.id] ? 'ok' : 'wa'}`}>
+            <span>Вопрос {i + 1}</span>
+            <b>{result.per_question[q.id] ? 'Верно' : 'Неверно'}</b>
           </div>
         ))}
       </div>
+
+      <button className="done-btn" onClick={acknowledge}>Я ознакомился с результатами</button>
     </div>
   )
 }
