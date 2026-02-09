@@ -120,7 +120,7 @@ export default function ExamPage() {
     return (
       <div className="prestart-page">
         <div className="prestart-header">
-          <div className="fio">{fio || 'Пользователь'}</div>
+          <div className="fio">{fio || 'Комплексное тестирование'}</div>
         </div>
         <div className="prestart-card">
           <h2>Перед началом экзамена</h2>
