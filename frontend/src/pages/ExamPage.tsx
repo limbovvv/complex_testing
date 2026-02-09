@@ -132,14 +132,25 @@ export default function ExamPage() {
           )}
           {showInstructions && (
             <div className="instructions">
-              <h3>Информатика (5 задач)</h3>
-              <p>Решайте задачи в Python/C++/JavaScript. Ответ принимается по итоговой сдаче.</p>
-              <h3>Математика (5 вопросов)</h3>
-              <p>Выберите один правильный вариант в каждом вопросе.</p>
-              <h3>Русский язык (5 вопросов)</h3>
-              <p>Выберите один правильный вариант в каждом вопросе.</p>
-              <p>Время: 60 минут. После сдачи редактирование запрещено.</p>
-              <button className="primary-btn" onClick={startExam}>Начать тестирование</button>
+              <div className="inst-header">Перед началом экзамена ознакомьтесь с правилами.</div>
+              <div className="inst-grid">
+                <div className="inst-card">
+                  <div className="inst-title">Информатика · 5 задач</div>
+                  <p>Пишите решения на Python / C++ / JavaScript. Проверка проходит после сдачи по всем тестам.</p>
+                </div>
+                <div className="inst-card">
+                  <div className="inst-title">Математика · 5 вопросов</div>
+                  <p>В каждом вопросе выберите один правильный вариант ответа.</p>
+                </div>
+                <div className="inst-card">
+                  <div className="inst-title">Русский язык · 5 вопросов</div>
+                  <p>В каждом вопросе выберите один правильный вариант ответа.</p>
+                </div>
+              </div>
+              <div className="inst-footer">
+                <div className="time-note">Время: 60 минут. После сдачи редактирование запрещено.</div>
+                <button className="primary-btn" onClick={startExam}>Начать тестирование</button>
+              </div>
             </div>
           )}
         </div>

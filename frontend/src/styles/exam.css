@@ -44,7 +44,41 @@
 .instructions {
   margin-top: 16px;
   display: grid;
-  gap: 8px;
+  gap: 12px;
+}
+
+.inst-header {
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.inst-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.inst-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.inst-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.inst-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-note {
+  color: var(--muted);
 }
 
 .primary-btn {
