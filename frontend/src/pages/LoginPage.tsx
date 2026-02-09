@@ -65,7 +65,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>Вступительный экзамен</h1>
+        <h1>Комплексное тестирование</h1>
         <p className="lead">Чтобы начать тестирование, пройдите регистрацию или войдите в аккаунт.</p>
         <p className="mode">{isRegister ? 'Регистрация' : 'Вход'}</p>
         {isRegister && (
