@@ -1,7 +1,17 @@
+.admin-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #fff6f6, #ffe9e9);
+  background-image: url('/assets/rsgv.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
 .admin-page {
   padding: 24px;
   max-width: 1100px;
   margin: 0 auto;
+  backdrop-filter: blur(8px);
 }
 
 .admin-top {
@@ -60,6 +70,7 @@
   border-radius: 10px;
   margin-bottom: 12px;
   border: 1px solid var(--border);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.05);
 }
 
 .section h3 {
@@ -141,6 +152,12 @@
   border-radius: 10px;
   padding: 14px;
   color: var(--primary);
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
 }
 
 @media (max-width: 960px) {

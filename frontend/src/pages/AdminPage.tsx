@@ -14,6 +14,12 @@ export default function AdminPage() {
   const [tForm, setTForm] = useState({ title: '', statement: '', points: 1, published: true })
   const [tcForm, setTcForm] = useState({ task_id: 0, input_data: '', output_data: '', is_hidden: false })
 
+  const statusLabel: Record<string, string> = {
+    in_progress: 'В процессе',
+    submitted: 'Сдано',
+    timed_out: 'Время вышло'
+  }
+
   async function load() {
     try {
       const [s, q, t, tc, a] = await Promise.all([
@@ -60,13 +66,14 @@ export default function AdminPage() {
     load()
   }
 
-  if (error) return <div className="admin-page"><div className="admin-error">{error}</div></div>
+  if (error) return <div className="admin-wrapper"><div className="admin-page"><div className="admin-error">{error}</div></div></div>
 
   return (
-    <div className="admin-page">
+    <div className="admin-wrapper">
+      <div className="admin-page">
       <div className="admin-top">
         <h2>Админ-панель</h2>
-        <button className="refresh-btn" onClick={load}>Обновить</button>
+        <button className="refresh-btn" onClick={load}>Обновить данные</button>
       </div>
 
       {stats && (
@@ -81,37 +88,48 @@ export default function AdminPage() {
 
       <div className="forms-grid">
         <div className="section">
-          <h3>Новый вопрос</h3>
+          <h3>Новый вопрос (тест)</h3>
+          <label className="field-label">Блок</label>
           <select value={qForm.subject} onChange={e => setQForm({ ...qForm, subject: e.target.value })}>
             <option value="math">Математика</option>
-            <option value="ru">Русский</option>
+            <option value="ru">Русский язык</option>
           </select>
+          <label className="field-label">Формулировка</label>
           <textarea placeholder="Текст вопроса" value={qForm.question} onChange={e => setQForm({ ...qForm, question: e.target.value })} />
-          <textarea placeholder="Варианты (каждый с новой строки)" value={qForm.options} onChange={e => setQForm({ ...qForm, options: e.target.value })} />
-          <input type="number" placeholder="Индекс правильного варианта" value={qForm.correct_index} onChange={e => setQForm({ ...qForm, correct_index: Number(e.target.value) })} />
-          <button className="primary" onClick={createQuestion}>Создать вопрос</button>
+          <label className="field-label">Варианты (каждый с новой строки)</label>
+          <textarea placeholder={'Например:\n2x+5\n10\n11'} value={qForm.options} onChange={e => setQForm({ ...qForm, options: e.target.value })} />
+          <label className="field-label">Номер правильного варианта (0..n-1)</label>
+          <input type="number" value={qForm.correct_index} onChange={e => setQForm({ ...qForm, correct_index: Number(e.target.value) })} />
+          <button className="primary" onClick={createQuestion}>Сохранить вопрос</button>
         </div>
 
         <div className="section">
-          <h3>Новая задача по инфе</h3>
-          <input placeholder="Название" value={tForm.title} onChange={e => setTForm({ ...tForm, title: e.target.value })} />
-          <textarea placeholder="Условие" value={tForm.statement} onChange={e => setTForm({ ...tForm, statement: e.target.value })} />
-          <button className="primary" onClick={createTask}>Создать задачу</button>
+          <h3>Новая задача (информатика)</h3>
+          <label className="field-label">Название</label>
+          <input placeholder="Например: Сумма двух чисел" value={tForm.title} onChange={e => setTForm({ ...tForm, title: e.target.value })} />
+          <label className="field-label">Условие</label>
+          <textarea placeholder="Опишите вход и выход" value={tForm.statement} onChange={e => setTForm({ ...tForm, statement: e.target.value })} />
+          <label className="field-label">Баллы</label>
+          <input type="number" value={tForm.points} onChange={e => setTForm({ ...tForm, points: Number(e.target.value) })} />
+          <button className="primary" onClick={createTask}>Сохранить задачу</button>
         </div>
 
         <div className="section">
-          <h3>Новый тесткейс</h3>
+          <h3>Тесткейс к задаче</h3>
+          <label className="field-label">Задача</label>
           <select value={tcForm.task_id} onChange={e => setTcForm({ ...tcForm, task_id: Number(e.target.value) })}>
             <option value={0}>Выберите задачу</option>
             {tasks.map(t => (<option key={t.id} value={t.id}>{t.title}</option>))}
           </select>
-          <textarea placeholder="Input" value={tcForm.input_data} onChange={e => setTcForm({ ...tcForm, input_data: e.target.value })} />
-          <textarea placeholder="Output" value={tcForm.output_data} onChange={e => setTcForm({ ...tcForm, output_data: e.target.value })} />
+          <label className="field-label">Входные данные</label>
+          <textarea placeholder="Пример: 2 3" value={tcForm.input_data} onChange={e => setTcForm({ ...tcForm, input_data: e.target.value })} />
+          <label className="field-label">Ожидаемый вывод</label>
+          <textarea placeholder="Пример: 5" value={tcForm.output_data} onChange={e => setTcForm({ ...tcForm, output_data: e.target.value })} />
           <label className="checkbox-row">
             <input type="checkbox" checked={tcForm.is_hidden} onChange={e => setTcForm({ ...tcForm, is_hidden: e.target.checked })} />
-            hidden тесткейс
+            Скрытый тесткейс (не показывается участникам)
           </label>
-          <button className="primary" onClick={createTestcase}>Создать тесткейс</button>
+          <button className="primary" onClick={createTestcase}>Сохранить тесткейс</button>
         </div>
       </div>
 
@@ -162,8 +180,8 @@ export default function AdminPage() {
           {testcases.map(tc => (
             <div key={tc.id} className="row">
               <div className="row-main">
-                <span className={`badge ${tc.is_hidden ? 'hidden' : 'visible'}`}>{tc.is_hidden ? 'HIDDEN' : 'VISIBLE'}</span>
-                <span>#{tc.id} · Task {tc.task_id}</span>
+                <span className={`badge ${tc.is_hidden ? 'hidden' : 'visible'}`}>{tc.is_hidden ? 'Скрыт' : 'Публичен'}</span>
+                <span>#{tc.id} · задача {tc.task_id}</span>
               </div>
             </div>
           ))}
@@ -176,12 +194,13 @@ export default function AdminPage() {
         {attempts.map(a => (
           <div key={a.attempt_id} className="row">
             <div className="row-main">
-              <span className={`badge ${a.status === 'timed_out' ? 'hidden' : 'visible'}`}>{a.status}</span>
+              <span className={`badge ${a.status === 'timed_out' ? 'hidden' : 'visible'}`}>{statusLabel[a.status] || a.status}</span>
               <span>#{a.attempt_id} · {a.email}</span>
             </div>
-            <span>балл: {a.score_total ?? '-'} · мат: {a.score_blocks?.math ?? 0}, рус: {a.score_blocks?.ru ?? 0}, инф: {a.score_blocks?.prog ?? 0}</span>
+            <span>Баллы: {a.score_total ?? '-'} · мат: {a.score_blocks?.math ?? 0}, рус: {a.score_blocks?.ru ?? 0}, инф: {a.score_blocks?.prog ?? 0}</span>
           </div>
         ))}
+      </div>
       </div>
     </div>
   )
