@@ -28,19 +28,27 @@ export default function ExamPage() {
   const navigate = useNavigate()
   const saveTimers = useRef<Record<string, any>>({})
 
+  const requireAuth = (message = 'Требуется вход') => {
+    setError(message)
+    navigate('/login')
+  }
+
   async function loadState() {
     try {
       const data = await apiFetch('/exam/state')
       setState(data)
     } catch (e: any) {
       setState(null)
+      requireAuth()
     }
   }
 
   useEffect(() => {
     loadState()
-    apiFetch('/auth/me').then(setProfile).catch(() => null)
-  }, [])
+    apiFetch('/auth/me')
+      .then(setProfile)
+      .catch(() => requireAuth())
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!state) return
@@ -65,8 +73,12 @@ export default function ExamPage() {
   }, [state, navigate])
 
   async function startExam() {
-    const data = await apiFetch('/exam/start', { method: 'POST' })
-    setState(data)
+    try {
+      const data = await apiFetch('/exam/start', { method: 'POST' })
+      setState(data)
+    } catch (_e) {
+      requireAuth()
+    }
   }
 
   function scheduleSave(key: string, fn: () => Promise<void>) {
