@@ -1,10 +1,8 @@
 .admin-wrapper {
   min-height: 100vh;
-  background: linear-gradient(145deg, #fff6f6, #ffe9e9);
-  background-image: url('/assets/rsgv.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: linear-gradient(135deg, #fff7f7, #ffe9e9, #fff7f7);
+  background-size: 200% 200%;
+  animation: adminGradient 18s ease infinite;
 }
 
 .admin-page {
@@ -172,4 +170,10 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+@keyframes adminGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
