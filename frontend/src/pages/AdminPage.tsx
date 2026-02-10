@@ -116,12 +116,12 @@ export default function AdminPage() {
       </div>
 
       <div className="section">
-        <h3>Вопросы</h3>
-        {questions.length === 0 && <div className="empty">Нет вопросов</div>}
-        {questions.map(q => (
+        <h3>Математика</h3>
+        {questions.filter(q => q.subject === 'math').length === 0 && <div className="empty">Нет вопросов по математике</div>}
+        {questions.filter(q => q.subject === 'math').map(q => (
           <div key={q.id} className="row">
             <div className="row-main">
-              <span className="tag">{q.subject.toUpperCase()}</span>
+              <span className="tag">MATH</span>
               <span>#{q.id} {q.question}</span>
             </div>
             <button onClick={() => togglePublish('questions', q.id)}>{q.published ? 'Снять публикацию' : 'Опубликовать'}</button>
@@ -130,7 +130,21 @@ export default function AdminPage() {
       </div>
 
       <div className="section">
-        <h3>Задачи</h3>
+        <h3>Русский язык</h3>
+        {questions.filter(q => q.subject === 'ru').length === 0 && <div className="empty">Нет вопросов по русскому</div>}
+        {questions.filter(q => q.subject === 'ru').map(q => (
+          <div key={q.id} className="row">
+            <div className="row-main">
+              <span className="tag">RU</span>
+              <span>#{q.id} {q.question}</span>
+            </div>
+            <button onClick={() => togglePublish('questions', q.id)}>{q.published ? 'Снять публикацию' : 'Опубликовать'}</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="section">
+        <h3>Информатика</h3>
         {tasks.length === 0 && <div className="empty">Нет задач</div>}
         {tasks.map(t => (
           <div key={t.id} className="row">
@@ -141,19 +155,19 @@ export default function AdminPage() {
             <button onClick={() => togglePublish('prog_tasks', t.id)}>{t.published ? 'Снять публикацию' : 'Опубликовать'}</button>
           </div>
         ))}
-      </div>
 
-      <div className="section">
-        <h3>Тесткейсы</h3>
-        {testcases.length === 0 && <div className="empty">Нет тесткейсов</div>}
-        {testcases.map(tc => (
-          <div key={tc.id} className="row">
-            <div className="row-main">
-              <span className={`badge ${tc.is_hidden ? 'hidden' : 'visible'}`}>{tc.is_hidden ? 'HIDDEN' : 'VISIBLE'}</span>
-              <span>#{tc.id} · Task {tc.task_id}</span>
+        <div className="sub-section">
+          <h4>Тесткейсы</h4>
+          {testcases.length === 0 && <div className="empty">Нет тесткейсов</div>}
+          {testcases.map(tc => (
+            <div key={tc.id} className="row">
+              <div className="row-main">
+                <span className={`badge ${tc.is_hidden ? 'hidden' : 'visible'}`}>{tc.is_hidden ? 'HIDDEN' : 'VISIBLE'}</span>
+                <span>#{tc.id} · Task {tc.task_id}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <div className="section">
