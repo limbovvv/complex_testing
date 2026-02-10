@@ -3,6 +3,8 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #fff7f7 0%, #ffe3e3 50%, #fff7f7 100%);
+  background-size: 200% 200%;
+  animation: adminGradient 22s linear infinite;
 }
 
 .admin-page {
@@ -67,7 +69,7 @@
   border-radius: 10px;
   margin-bottom: 12px;
   border: 1px solid var(--border);
-  box-shadow: 0 10px 35px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
 }
 
 .section h3 {
@@ -176,28 +178,4 @@
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-.admin-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -40% -20%;
-  background:
-    radial-gradient(60% 60% at 20% 20%, rgba(255, 70, 70, 0.18), transparent 60%),
-    radial-gradient(50% 50% at 80% 30%, rgba(255, 130, 130, 0.2), transparent 60%),
-    radial-gradient(40% 40% at 30% 80%, rgba(255, 90, 90, 0.16), transparent 60%);
-  filter: blur(6px);
-  animation: adminFloat 14s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.admin-page {
-  position: relative;
-  z-index: 1;
-}
-
-@keyframes adminFloat {
-  0% { transform: translate3d(-2%, -2%, 0) rotate(0deg); }
-  50% { transform: translate3d(2%, 3%, 0) rotate(1deg); }
-  100% { transform: translate3d(-2%, -2%, 0) rotate(0deg); }
 }
