@@ -1,5 +1,5 @@
 import asyncio
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from app.db.session import AsyncSessionLocal
 from app.models import User, Question, ProgTask, ProgTestcase
@@ -33,83 +33,84 @@ async def seed():
                 admin_user.faculty = "Факультет связи и автоматизированное управление войсками"
 
         # Questions
-        res_q = await session.execute(select(Question))
-        if not res_q.scalars().first():
-            math_questions = [
-                Question(
-                    subject="math",
-                    question="Найдите значение выражения: 2x + 5 при x = 3",
-                    options=["8", "9", "10", "11"],
-                    correct_index=3,
-                    published=True,
-                ),
-                Question(
-                    subject="math",
-                    question="Чему равен корень уравнения x^2 = 49, если x > 0?",
-                    options=["-7", "7", "0", "14"],
-                    correct_index=1,
-                    published=True,
-                ),
-                Question(
-                    subject="math",
-                    question="Сколько процентов составляет 15 из 60?",
-                    options=["20%", "25%", "30%", "35%"],
-                    correct_index=1,
-                    published=True,
-                ),
-                Question(
-                    subject="math",
-                    question="Сумма углов треугольника равна",
-                    options=["90°", "120°", "180°", "360°"],
-                    correct_index=2,
-                    published=True,
-                ),
-                Question(
-                    subject="math",
-                    question="Чему равна площадь квадрата со стороной 4?",
-                    options=["8", "12", "16", "20"],
-                    correct_index=2,
-                    published=True,
-                ),
-            ]
-            ru_questions = [
-                Question(
-                    subject="ru",
-                    question="Укажите слово с безударной гласной, проверяемой ударением",
-                    options=["з..рница", "г..лос", "т..ржество", "пр..творить"],
-                    correct_index=1,
-                    published=True,
-                ),
-                Question(
-                    subject="ru",
-                    question="В каком слове пишется Ь?",
-                    options=["камыш..", "рож..", "дочь", "плащ.."],
-                    correct_index=2,
-                    published=True,
-                ),
-                Question(
-                    subject="ru",
-                    question="Укажите вариант с правильным ударением",
-                    options=["тортЫ", "красИвее", "свЁкла", "дОговор"],
-                    correct_index=2,
-                    published=True,
-                ),
-                Question(
-                    subject="ru",
-                    question="Какое слово является существительным?",
-                    options=["быстрый", "бег", "читать", "смело"],
-                    correct_index=1,
-                    published=True,
-                ),
-                Question(
-                    subject="ru",
-                    question="В каком слове есть приставка?",
-                    options=["море", "лесной", "подъезд", "друг"],
-                    correct_index=2,
-                    published=True,
-                ),
-            ]
-            session.add_all(math_questions + ru_questions)
+        # Replace math/ru questions to keep seed consistent
+        await session.execute(delete(Question).where(Question.subject.in_(["math", "ru"])))
+
+        math_questions = [
+            Question(
+                subject="math",
+                question="Решите уравнение: 2x − 5 = 9",
+                options=["2", "3", "7", "9"],
+                correct_index=2,
+                published=True,
+            ),
+            Question(
+                subject="math",
+                question="Вычислите: (3^2 − 5) · 2",
+                options=["8", "10", "12", "14"],
+                correct_index=1,
+                published=True,
+            ),
+            Question(
+                subject="math",
+                question="Найдите значение выражения (2/3) + (1/6)",
+                options=["1/2", "2/3", "5/6", "1"],
+                correct_index=2,
+                published=True,
+            ),
+            Question(
+                subject="math",
+                question="В треугольнике два угла равны 50° и 60°. Найдите третий угол.",
+                options=["60°", "70°", "80°", "90°"],
+                correct_index=1,
+                published=True,
+            ),
+            Question(
+                subject="math",
+                question="Скорость 60 км/ч. Сколько километров пройдет автомобиль за 1.5 часа?",
+                options=["80", "85", "90", "100"],
+                correct_index=2,
+                published=True,
+            ),
+        ]
+        ru_questions = [
+            Question(
+                subject="ru",
+                question="Укажите слово с безударной гласной, проверяемой ударением",
+                options=["б..рёза", "м..локо", "л..мон", "к..мната"],
+                correct_index=0,
+                published=True,
+            ),
+            Question(
+                subject="ru",
+                question="В каком слове пишется Ь?",
+                options=["камыш..", "мяч..", "ночь", "плащ.."],
+                correct_index=2,
+                published=True,
+            ),
+            Question(
+                subject="ru",
+                question="Укажите вариант с правильным ударением",
+                options=["кУхонный", "звОнит", "красИвее", "жалюзИ"],
+                correct_index=3,
+                published=True,
+            ),
+            Question(
+                subject="ru",
+                question="Какое слово является прилагательным?",
+                options=["смелость", "читать", "смелый", "быстро"],
+                correct_index=2,
+                published=True,
+            ),
+            Question(
+                subject="ru",
+                question="В каком слове есть приставка?",
+                options=["вход", "сад", "дом", "окно"],
+                correct_index=0,
+                published=True,
+            ),
+        ]
+        session.add_all(math_questions + ru_questions)
 
         res_t = await session.execute(select(ProgTask))
         if not res_t.scalars().first():
