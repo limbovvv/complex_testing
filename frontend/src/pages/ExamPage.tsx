@@ -241,16 +241,22 @@ export default function ExamPage() {
             </div>
           ) : (
             <div className="options">
-              {current.options.map((opt: string, idx: number) => (
-                <label key={idx}>
-                  <input
-                    type="radio"
-                    checked={state.answers[current.id] === idx}
-                    onChange={() => saveAnswer(current.id, idx)}
-                  />
-                  {opt}
-                </label>
-              ))}
+              {current.options.map((opt: string, idx: number) => {
+                const selected = state.answers[current.id] === idx
+                return (
+                  <label key={idx} className={`option ${selected ? 'selected' : ''}`}>
+                    <span className="option-left">
+                      <input
+                        type="radio"
+                        checked={selected}
+                        onChange={() => saveAnswer(current.id, idx)}
+                      />
+                    </span>
+                    <span className="option-text">{opt}</span>
+                    <span className="option-number">{idx + 1}</span>
+                  </label>
+                )
+              })}
             </div>
           )}
 
