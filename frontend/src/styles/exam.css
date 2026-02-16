@@ -1,10 +1,11 @@
 .exam-layout { display: flex; flex-direction: column; min-height: 100vh; background: linear-gradient(180deg, #fdf5f5 0%, #fff 40%); }
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: #ffffff; color: var(--text); border-bottom: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.04); gap: 12px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: #fff; color: var(--text); border-bottom: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.04); gap: 12px; position: sticky; top: 0; z-index: 10; }
 .topbar .timer { font-weight: 700; color: var(--primary-dark); }
-.topbar .autosave { color: var(--muted); }
-.topbar .submit { background: var(--primary); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 700; box-shadow: 0 8px 18px rgba(255,70,70,0.18); }
+.topbar .autosave { color: var(--muted); font-size: 14px; }
+.topbar .submit { background: var(--primary); border: none; color: #fff; padding: 10px 18px; border-radius: 12px; font-weight: 700; box-shadow: 0 8px 18px rgba(255,70,70,0.18); }
+.topbar .submit:hover { background: var(--primary-dark); }
 .content { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 62px); }
-.sidebar { background: #fff; color: var(--text); padding: 18px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid var(--border); box-shadow: inset -1px 0 0 var(--border); position: sticky; top: 62px; height: calc(100vh - 62px); }
+.sidebar { background: #fff; color: var(--text); padding: 18px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid var(--border); box-shadow: inset -1px 0 0 var(--border); }
 .sidebar .block { padding: 12px; background: #fff; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border); transition: all 0.15s ease; font-weight: 600; }
 .sidebar .block span { font-size: 12px; color: var(--muted); }
 .sidebar .block.active { background: #ffe5e5; border-color: var(--primary); color: var(--primary-dark); box-shadow: 0 6px 14px rgba(255,70,70,0.1); }
@@ -14,7 +15,7 @@
 .sidebar .numbers .done { background: #ffdcdc; color: var(--primary-dark); border-color: #f3aaaa; }
 .sidebar .progress { margin-top: auto; font-weight: 600; color: var(--primary-dark); }
 .main { padding: 22px; overflow: auto; max-width: 980px; margin: 0 auto; width: 100%; }
-.question { background: white; padding: 22px; border-radius: 16px; margin-bottom: 18px; border: 1px solid #f2c7c7; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+.question { background: #fff; padding: 22px; border-radius: 16px; margin-bottom: 18px; border: 1px solid #f2c7c7; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 .question h3 { margin: 0 0 6px; color: var(--primary-dark); font-size: 20px; }
 .question p { margin: 0; color: var(--text); line-height: 1.5; }
 .options { display: grid; gap: 12px; }
@@ -24,22 +25,21 @@
 .options input { accent-color: var(--primary); }
 .option-number { font-size: 12px; color: var(--muted); text-align: right; }
 .prog-panel { display: grid; gap: 10px; }
-.prog-panel select { width: 220px; padding: 8px; border-radius: 10px; border: 1px solid var(--border); }
+.prog-panel select { width: 220px; }
 .nav { display: flex; justify-content: space-between; margin-top: 18px; gap: 10px; }
-.nav button { padding: 12px 18px; border-radius: 12px; border: 1px solid #f1c1c1; background: #fff; font-weight: 700; min-width: 120px; }
-.nav button:disabled { opacity: 0.5; }
+.nav button { min-width: 120px; }
 .nav button:not(:disabled) { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 8px 16px rgba(255,70,70,0.18); }
-.exam-empty { padding: 40px; }
 .error { color: var(--primary); margin-top: 10px; }
 
 .prestart-page {
   min-height: 100vh;
-  background: #fff;
+  background: radial-gradient(circle at top, #ffe7e7 0%, #ffffff 58%);
 }
 
 .prestart-header {
   padding: 16px 24px;
   border-bottom: 1px solid var(--border);
+  background: #fff;
 }
 
 .prestart-header .fio {
@@ -48,12 +48,13 @@
 }
 
 .prestart-card {
-  max-width: 760px;
-  margin: 48px auto;
+  max-width: 860px;
+  margin: 42px auto;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 24px;
+  box-shadow: 0 16px 30px rgba(0,0,0,0.06);
 }
 
 .instructions {
@@ -104,7 +105,9 @@
   padding: 10px 14px;
   border-radius: 10px;
 }
+
 @media (max-width: 900px) {
-  .content { grid-template-columns: 1fr; }
-  .sidebar { flex-direction: row; flex-wrap: wrap; }
+  .content { grid-template-columns: 1fr; height: auto; }
+  .sidebar { flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 16px; }
 }

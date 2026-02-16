@@ -4,51 +4,55 @@
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
-  background: radial-gradient(circle at top, #ffe4e4 0%, #ffffff 55%);
+  background: radial-gradient(circle at top, #ffe6e6 0%, #ffffff 55%);
 }
 
 .login-card {
   background: #fff;
-  padding: 32px;
-  border-radius: 16px;
-  width: 420px;
+  padding: 34px;
+  border-radius: 18px;
+  width: 440px;
   border: 1px solid var(--border);
-  box-shadow: 0 10px 30px rgba(180, 20, 20, 0.08);
+  box-shadow: 0 18px 38px rgba(180, 20, 20, 0.09);
 }
 
 .login-card h1 {
   margin: 0 0 10px;
-  color: var(--primary);
+  color: var(--primary-dark);
+  font-size: 32px;
 }
 
 .login-card .lead {
-  margin: 0 0 12px;
+  margin: 0 0 16px;
   color: var(--muted);
-  line-height: 1.35;
+  line-height: 1.42;
 }
 
 .login-card .mode {
   margin: 0 0 10px;
   color: var(--primary-dark);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .login-card .admin-hint {
   margin-top: 8px;
   color: var(--primary-dark);
   font-size: 13px;
+  background: #fff7f7;
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: 10px;
 }
 
 .login-card .error {
   color: var(--primary);
   margin: 8px 0;
+  font-weight: 600;
 }
 
 .login-card button {
   width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 10px;
+  margin-top: 10px;
 }
 
 .login-card button:not(.link) {
@@ -59,10 +63,11 @@
 
 .login-card button:not(.link):hover {
   background: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 .login-card .link {
   background: #fff;
-  color: var(--primary);
+  color: var(--primary-dark);
   border-color: var(--border);
 }
