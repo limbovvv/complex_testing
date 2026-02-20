@@ -189,20 +189,23 @@ export default function ExamPage() {
       </div>
 
       <div className="content">
-        <aside className="sidebar">
-          <div className={`block ${block === 'prog' ? 'active' : ''}`} onClick={() => { setBlock('prog'); setIndex(0) }}>
-            Информатика
-            <span>{progAnswered}/5</span>
+        <main className="main">
+          <div className="task-switcher">
+            <div className={`block ${block === 'prog' ? 'active' : ''}`} onClick={() => { setBlock('prog'); setIndex(0) }}>
+              Информатика
+              <span>{progAnswered}/5</span>
+            </div>
+            <div className={`block ${block === 'math' ? 'active' : ''}`} onClick={() => { setBlock('math'); setIndex(0) }}>
+              Математика
+              <span>{mathAnswered}/5</span>
+            </div>
+            <div className={`block ${block === 'ru' ? 'active' : ''}`} onClick={() => { setBlock('ru'); setIndex(0) }}>
+              Русский
+              <span>{ruAnswered}/5</span>
+            </div>
           </div>
-          <div className={`block ${block === 'math' ? 'active' : ''}`} onClick={() => { setBlock('math'); setIndex(0) }}>
-            Математика
-            <span>{mathAnswered}/5</span>
-          </div>
-          <div className={`block ${block === 'ru' ? 'active' : ''}`} onClick={() => { setBlock('ru'); setIndex(0) }}>
-            Русский
-            <span>{ruAnswered}/5</span>
-          </div>
-          <div className="numbers">
+
+          <div className="numbers top-numbers">
             {items.map((it: any, i: number) => {
               const done = block === 'prog'
                 ? !!state.drafts[it.id]?.code
@@ -211,11 +214,9 @@ export default function ExamPage() {
                 <button key={it.id} className={done ? 'done' : ''} onClick={() => setIndex(i)}>{i + 1}</button>
               )
             })}
+            <div className="progress">Отвечено: {block === 'prog' ? progAnswered : block === 'math' ? mathAnswered : ruAnswered}/5</div>
           </div>
-          <div className="progress">Отвечено: {block === 'prog' ? progAnswered : block === 'math' ? mathAnswered : ruAnswered}/5</div>
-        </aside>
 
-        <main className="main">
           <div className="question">
             <h3>{block === 'prog' ? current.title : `Вопрос ${index + 1}`}</h3>
             <p>{block === 'prog' ? current.statement : current.question}</p>
