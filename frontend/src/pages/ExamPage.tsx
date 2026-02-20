@@ -189,22 +189,22 @@ export default function ExamPage() {
       </div>
 
       <div className="content">
-        <main className="main">
-          <div className="task-switcher">
-            <div className={`block ${block === 'prog' ? 'active' : ''}`} onClick={() => { setBlock('prog'); setIndex(0) }}>
-              Информатика
-              <span>{progAnswered}/5</span>
-            </div>
-            <div className={`block ${block === 'math' ? 'active' : ''}`} onClick={() => { setBlock('math'); setIndex(0) }}>
-              Математика
-              <span>{mathAnswered}/5</span>
-            </div>
-            <div className={`block ${block === 'ru' ? 'active' : ''}`} onClick={() => { setBlock('ru'); setIndex(0) }}>
-              Русский
-              <span>{ruAnswered}/5</span>
-            </div>
+        <aside className="sidebar">
+          <div className={`block ${block === 'prog' ? 'active' : ''}`} onClick={() => { setBlock('prog'); setIndex(0) }}>
+            Информатика
+            <span>{progAnswered}/5</span>
           </div>
+          <div className={`block ${block === 'math' ? 'active' : ''}`} onClick={() => { setBlock('math'); setIndex(0) }}>
+            Математика
+            <span>{mathAnswered}/5</span>
+          </div>
+          <div className={`block ${block === 'ru' ? 'active' : ''}`} onClick={() => { setBlock('ru'); setIndex(0) }}>
+            Русский
+            <span>{ruAnswered}/5</span>
+          </div>
+        </aside>
 
+        <main className="main">
           <div className="numbers top-numbers">
             {items.map((it: any, i: number) => {
               const done = block === 'prog'
