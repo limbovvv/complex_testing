@@ -52,9 +52,26 @@
   font-size: 18px;
 }
 
+.tabs-row {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.tab-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
 .forms-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
   gap: 12px;
 }
 
@@ -69,11 +86,6 @@
 
 .section h3 {
   margin-top: 0;
-  margin-bottom: 8px;
-  color: var(--primary-dark);
-}
-
-.section h4 {
   margin-bottom: 8px;
   color: var(--primary-dark);
 }
@@ -168,9 +180,17 @@
   margin-top: 6px;
 }
 
+.attempts-section {
+  margin-top: 18px;
+}
+
 @media (max-width: 960px) {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+
+  .tabs-row {
+    flex-wrap: wrap;
   }
 
   .forms-grid {
