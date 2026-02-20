@@ -195,7 +195,7 @@ export default function AdminPage() {
           <div key={a.attempt_id} className="row">
             <div className="row-main">
               <span className={`badge ${a.status === 'timed_out' ? 'hidden' : 'visible'}`}>{statusLabel[a.status] || a.status}</span>
-              <span>#{a.attempt_id} · {a.email}</span>
+              <span>#{a.attempt_id} · {a.full_name || a.email}</span>
             </div>
             <span>Баллы: {a.score_total ?? '-'} · мат: {a.score_blocks?.math ?? 0}, рус: {a.score_blocks?.ru ?? 0}, инф: {a.score_blocks?.prog ?? 0}</span>
           </div>

@@ -176,6 +176,9 @@ async def attempts(session: AsyncSession = Depends(get_session), _: str = Depend
             "attempt_id": attempt.id,
             "user_id": user.id,
             "email": user.email,
+            "full_name": " ".join(
+                [part for part in [user.last_name, user.first_name, user.middle_name] if part]
+            ) or user.email,
             "status": attempt.status,
             "started_at": attempt.started_at,
             "ends_at": attempt.ends_at,
