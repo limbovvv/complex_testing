@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [qForm, setQForm] = useState({ subject: 'math', question: '', options: '', correct_index: 0, points: 1, published: true })
   const [tForm, setTForm] = useState({ title: '', statement: '', points: 1, published: true })
   const [tcForm, setTcForm] = useState({ task_id: 0, input_data: '', output_data: '', is_hidden: false })
+  const [selectedTaskId, setSelectedTaskId] = useState<number>(0)
 
   const statusLabel: Record<string, string> = {
     in_progress: 'В процессе',
@@ -25,6 +26,11 @@ export default function AdminPage() {
 
   const mathQuestions = useMemo(() => questions.filter(q => q.subject === 'math'), [questions])
   const ruQuestions = useMemo(() => questions.filter(q => q.subject === 'ru'), [questions])
+  const selectedTask = useMemo(() => tasks.find(t => t.id === selectedTaskId) || null, [tasks, selectedTaskId])
+  const selectedTaskCases = useMemo(
+    () => (selectedTaskId ? testcases.filter(tc => tc.task_id === selectedTaskId) : []),
+    [testcases, selectedTaskId]
+  )
 
   async function load() {
     try {
@@ -59,14 +65,16 @@ export default function AdminPage() {
   }
 
   async function createTask() {
-    await apiFetch('/admin/prog_tasks', { method: 'POST', body: JSON.stringify(tForm) })
+    const task = await apiFetch('/admin/prog_tasks', { method: 'POST', body: JSON.stringify(tForm) })
     setTForm({ title: '', statement: '', points: 1, published: true })
+    setSelectedTaskId(task.id)
+    setTcForm(prev => ({ ...prev, task_id: task.id }))
     load()
   }
 
   async function createTestcase() {
     await apiFetch('/admin/prog_testcases', { method: 'POST', body: JSON.stringify(tcForm) })
-    setTcForm({ task_id: 0, input_data: '', output_data: '', is_hidden: false })
+    setTcForm(prev => ({ ...prev, input_data: '', output_data: '', is_hidden: false }))
     load()
   }
 
@@ -150,19 +158,31 @@ export default function AdminPage() {
               <div className="section">
                 <h3>Тесткейс к задаче</h3>
                 <label className="field-label">Задача</label>
-                <select value={tcForm.task_id} onChange={e => setTcForm({ ...tcForm, task_id: Number(e.target.value) })}>
+                <select
+                  value={tcForm.task_id || selectedTaskId}
+                  onChange={e => {
+                    const id = Number(e.target.value)
+                    setSelectedTaskId(id)
+                    setTcForm({ ...tcForm, task_id: id })
+                  }}
+                >
                   <option value={0}>Выберите задачу</option>
                   {tasks.map(t => (<option key={t.id} value={t.id}>{t.title}</option>))}
                 </select>
+                {selectedTask && <div className="hint-box">Выбрана: <b>#{selectedTask.id} {selectedTask.title}</b></div>}
                 <label className="field-label">Входные данные</label>
                 <textarea placeholder="Пример: 2 3" value={tcForm.input_data} onChange={e => setTcForm({ ...tcForm, input_data: e.target.value })} />
                 <label className="field-label">Ожидаемый вывод</label>
                 <textarea placeholder="Пример: 5" value={tcForm.output_data} onChange={e => setTcForm({ ...tcForm, output_data: e.target.value })} />
+                <div className="mini-actions">
+                  <button type="button" onClick={() => setTcForm({ ...tcForm, input_data: '2 3\\n', output_data: '5\\n' })}>Шаблон 2+3</button>
+                  <button type="button" onClick={() => setTcForm({ ...tcForm, input_data: '', output_data: '', is_hidden: false })}>Очистить</button>
+                </div>
                 <label className="checkbox-row">
                   <input type="checkbox" checked={tcForm.is_hidden} onChange={e => setTcForm({ ...tcForm, is_hidden: e.target.checked })} />
                   Скрытый тесткейс
                 </label>
-                <button className="primary" onClick={createTestcase}>Сохранить тесткейс</button>
+                <button className="primary" disabled={!tcForm.task_id} onClick={createTestcase}>Сохранить тесткейс</button>
               </div>
             </div>
 
@@ -175,15 +195,19 @@ export default function AdminPage() {
                     <span className="tag">INF</span>
                     <span>#{t.id} {t.title}</span>
                   </div>
-                  <button onClick={() => togglePublish('prog_tasks', t.id)}>{t.published ? 'Снять публикацию' : 'Опубликовать'}</button>
+                  <div className="row-actions">
+                    <button onClick={() => { setSelectedTaskId(t.id); setTcForm(prev => ({ ...prev, task_id: t.id })) }}>Выбрать</button>
+                    <button onClick={() => togglePublish('prog_tasks', t.id)}>{t.published ? 'Снять публикацию' : 'Опубликовать'}</button>
+                  </div>
                 </div>
               ))}
             </div>
 
             <div className="section">
-              <h3>Тесткейсы</h3>
-              {testcases.length === 0 && <div className="empty">Нет тесткейсов</div>}
-              {testcases.map(tc => (
+              <h3>Тесткейсы {selectedTask ? `для #${selectedTask.id}` : ''}</h3>
+              {!selectedTask && <div className="empty">Сначала выберите задачу выше, чтобы работать с её тесткейсами.</div>}
+              {selectedTask && selectedTaskCases.length === 0 && <div className="empty">Для выбранной задачи тесткейсов пока нет.</div>}
+              {selectedTaskCases.map(tc => (
                 <div key={tc.id} className="row">
                   <div className="row-main">
                     <span className={`badge ${tc.is_hidden ? 'hidden' : 'visible'}`}>{tc.is_hidden ? 'Скрыт' : 'Публичен'}</span>
