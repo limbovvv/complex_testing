@@ -12,6 +12,13 @@ from app.worker.celery_app import celery_app
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 
+def _normalize_answer(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = "".join(value.strip().lower().replace("ё", "е").split())
+    return normalized if normalized else None
+
+
 async def _get_attempt(session: AsyncSession, user_id: int) -> ExamAttempt | None:
     result = await session.execute(select(ExamAttempt).where(ExamAttempt.user_id == user_id))
     return result.scalar_one_or_none()
@@ -50,11 +57,21 @@ async def get_state(current=Depends(get_current_user), session: AsyncSession = D
     result_prog = await session.execute(select(ProgTask).where(ProgTask.published.is_(True)))
 
     math_questions = [
-        {"id": q.id, "question": q.question, "options": q.options, "points": q.points}
+        {
+            "id": q.id,
+            "question": q.question,
+            "points": q.points,
+            "answer_hint": "Введите короткий ответ. Без пробелов. Регистр не важен."
+        }
         for q in result_math.scalars().all()
     ]
     ru_questions = [
-        {"id": q.id, "question": q.question, "options": q.options, "points": q.points}
+        {
+            "id": q.id,
+            "question": q.question,
+            "points": q.points,
+            "answer_hint": "Введите короткий ответ. Без пробелов. Регистр не важен."
+        }
         for q in result_ru.scalars().all()
     ]
     prog_tasks = [
@@ -65,7 +82,7 @@ async def get_state(current=Depends(get_current_user), session: AsyncSession = D
     answers = {}
     res_ans = await session.execute(select(AttemptAnswer).where(AttemptAnswer.attempt_id == attempt.id))
     for a in res_ans.scalars().all():
-        answers[str(a.question_id)] = a.selected_index
+        answers[str(a.question_id)] = a.answer_text
 
     drafts = {}
     res_prog = await session.execute(select(AttemptProg).where(AttemptProg.attempt_id == attempt.id))
@@ -115,11 +132,18 @@ async def save_answer(
         )
     )
     ans = res.scalar_one_or_none()
+    normalized = _normalize_answer(data.answer_text)
     if not ans:
-        ans = AttemptAnswer(attempt_id=attempt.id, question_id=question_id, selected_index=data.selected_index)
+        ans = AttemptAnswer(
+            attempt_id=attempt.id,
+            question_id=question_id,
+            answer_text=normalized,
+            selected_index=None,
+        )
         session.add(ans)
     else:
-        ans.selected_index = data.selected_index
+        ans.answer_text = normalized
+        ans.selected_index = None
     await session.commit()
     return {"status": "ok"}
 

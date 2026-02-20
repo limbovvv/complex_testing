@@ -13,7 +13,7 @@ export default function AdminPage() {
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<SubjectTab>('math')
 
-  const [qForm, setQForm] = useState({ subject: 'math', question: '', options: '', correct_index: 0, points: 1, published: true })
+  const [qForm, setQForm] = useState({ subject: 'math', question: '', correct_answer: '', points: 1, published: true })
   const [tForm, setTForm] = useState({ title: '', statement: '', points: 1, published: true })
   const [tcForm, setTcForm] = useState({ task_id: 0, input_data: '', output_data: '', is_hidden: false })
   const [selectedTaskId, setSelectedTaskId] = useState<number>(0)
@@ -55,12 +55,17 @@ export default function AdminPage() {
   useEffect(() => { load() }, [])
 
   async function createQuestion(subject: 'math' | 'ru') {
-    const options = qForm.options.split('\n').map(s => s.trim()).filter(Boolean)
     await apiFetch('/admin/questions', {
       method: 'POST',
-      body: JSON.stringify({ ...qForm, subject, options })
+      body: JSON.stringify({
+        ...qForm,
+        subject,
+        correct_answer: qForm.correct_answer.trim(),
+        options: null,
+        correct_index: null,
+      })
     })
-    setQForm({ subject, question: '', options: '', correct_index: 0, points: 1, published: true })
+    setQForm({ subject, question: '', correct_answer: '', points: 1, published: true })
     load()
   }
 
@@ -118,10 +123,9 @@ export default function AdminPage() {
               <h3>Добавить вопрос: {currentSubjectLabel}</h3>
               <label className="field-label">Формулировка</label>
               <textarea placeholder="Текст вопроса" value={qForm.question} onChange={e => setQForm({ ...qForm, question: e.target.value })} />
-              <label className="field-label">Варианты (каждый с новой строки)</label>
-              <textarea placeholder={'Например:\nВариант 1\nВариант 2'} value={qForm.options} onChange={e => setQForm({ ...qForm, options: e.target.value })} />
-              <label className="field-label">Номер правильного варианта (0..n-1)</label>
-              <input type="number" value={qForm.correct_index} onChange={e => setQForm({ ...qForm, correct_index: Number(e.target.value) })} />
+              <label className="field-label">Правильный ответ</label>
+              <input placeholder="Например: 42" value={qForm.correct_answer} onChange={e => setQForm({ ...qForm, correct_answer: e.target.value })} />
+              <div className="hint-box">Проверка в конце экзамена. Ответ указывать коротко, без пробелов, регистр не важен.</div>
               <button className="primary" onClick={() => createQuestion(activeTab)}>Сохранить вопрос</button>
             </div>
 

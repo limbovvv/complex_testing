@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class AnswerIn(BaseModel):
-    selected_index: int | None
+    answer_text: str | None
 
 
 class DraftIn(BaseModel):

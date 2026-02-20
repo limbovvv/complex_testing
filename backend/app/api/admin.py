@@ -19,6 +19,8 @@ async def list_questions(session: AsyncSession = Depends(get_session), _: str = 
 
 @router.post("/questions", response_model=QuestionOut)
 async def create_question(data: QuestionIn, session: AsyncSession = Depends(get_session), _: str = Depends(get_admin_user)):
+    if data.subject in {"math", "ru"} and not (data.correct_answer and data.correct_answer.strip()):
+        raise HTTPException(status_code=400, detail="Correct answer is required for math/ru")
     q = Question(**data.model_dump())
     session.add(q)
     await session.commit()
@@ -32,6 +34,8 @@ async def update_question(question_id: int, data: QuestionIn, session: AsyncSess
     q = res.scalar_one_or_none()
     if not q:
         raise HTTPException(status_code=404, detail="Not found")
+    if data.subject in {"math", "ru"} and not (data.correct_answer and data.correct_answer.strip()):
+        raise HTTPException(status_code=400, detail="Correct answer is required for math/ru")
     for k, v in data.model_dump().items():
         setattr(q, k, v)
     await session.commit()

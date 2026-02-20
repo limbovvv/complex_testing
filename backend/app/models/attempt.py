@@ -29,6 +29,7 @@ class AttemptAnswer(Base):
     attempt_id: Mapped[int] = mapped_column(ForeignKey("exam_attempts.id", ondelete="CASCADE"))
     question_id: Mapped[int] = mapped_column(ForeignKey("questions.id", ondelete="CASCADE"))
     selected_index: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    answer_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_correct: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
 
     attempt = relationship("ExamAttempt", back_populates="answers")

@@ -12,6 +12,13 @@ def _run(coro):
     return asyncio.run(coro)
 
 
+def _normalize_answer(value: str | None) -> str:
+    if not value:
+        return ""
+    # Compare with no spaces and case-insensitive for short-answer tasks.
+    return "".join(value.strip().lower().replace("ё", "е").split())
+
+
 @celery_app.task(name="grade_attempt")
 def grade_attempt(attempt_id: int):
     _run(_grade_attempt(attempt_id))
@@ -60,7 +67,10 @@ async def _grade_attempt(attempt_id: int):
             q = q_map.get(ans.question_id)
             if not q:
                 continue
-            is_correct = ans.selected_index is not None and ans.selected_index == q.correct_index
+            if q.correct_answer:
+                is_correct = _normalize_answer(ans.answer_text) == _normalize_answer(q.correct_answer)
+            else:
+                is_correct = ans.selected_index is not None and ans.selected_index == q.correct_index
             ans.is_correct = is_correct
             if is_correct:
                 if q.subject == "math":

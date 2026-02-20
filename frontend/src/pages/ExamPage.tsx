@@ -12,7 +12,7 @@ type ExamState = {
   math_questions: any[]
   ru_questions: any[]
   prog_tasks: any[]
-  answers: Record<string, number | null>
+  answers: Record<string, string | null>
   drafts: Record<string, { language: string, code: string }>
 }
 
@@ -94,16 +94,16 @@ export default function ExamPage() {
     }, 1200)
   }
 
-  function saveAnswer(questionId: number, selectedIndex: number | null) {
+  function saveAnswer(questionId: number, answerText: string) {
     if (!state) return
     setState({
       ...state,
-      answers: { ...state.answers, [questionId]: selectedIndex }
+      answers: { ...state.answers, [questionId]: answerText }
     })
     scheduleSave(`q_${questionId}`, async () => {
       await apiFetch(`/exam/answer/${questionId}`, {
         method: 'PUT',
-        body: JSON.stringify({ selected_index: selectedIndex })
+        body: JSON.stringify({ answer_text: answerText })
       })
     })
   }
@@ -152,11 +152,11 @@ export default function ExamPage() {
                 </div>
                 <div className="inst-card">
                   <div className="inst-title">Математика · 5 вопросов</div>
-                  <p>В каждом вопросе выберите один правильный вариант ответа.</p>
+                  <p>В каждом вопросе введите короткий ответ в поле. Без пробелов, регистр не важен.</p>
                 </div>
                 <div className="inst-card">
                   <div className="inst-title">Русский язык · 5 вопросов</div>
-                  <p>В каждом вопросе выберите один правильный вариант ответа.</p>
+                  <p>В каждом вопросе введите короткий ответ в поле. Без пробелов, регистр не важен.</p>
                 </div>
               </div>
               <div className="inst-footer">
@@ -175,7 +175,7 @@ export default function ExamPage() {
   const items = block === 'prog' ? state.prog_tasks : block === 'math' ? state.math_questions : state.ru_questions
   const current = items[index]
 
-  const answerCountFor = (ids: number[]) => ids.filter(id => state.answers[id] !== undefined).length
+  const answerCountFor = (ids: number[]) => ids.filter(id => (state.answers[id] || '').trim().length > 0).length
   const progAnswered = Object.keys(state.drafts).length
   const mathAnswered = answerCountFor(state.math_questions.map(q => q.id))
   const ruAnswered = answerCountFor(state.ru_questions.map(q => q.id))
@@ -206,7 +206,7 @@ export default function ExamPage() {
             {items.map((it: any, i: number) => {
               const done = block === 'prog'
                 ? !!state.drafts[it.id]?.code
-                : state.answers[it.id] !== undefined
+                : (state.answers[it.id] || '').trim().length > 0
               return (
                 <button key={it.id} className={done ? 'done' : ''} onClick={() => setIndex(i)}>{i + 1}</button>
               )
@@ -241,22 +241,15 @@ export default function ExamPage() {
             </div>
           ) : (
             <div className="options">
-              {current.options.map((opt: string, idx: number) => {
-                const selected = state.answers[current.id] === idx
-                return (
-                  <label key={idx} className={`option ${selected ? 'selected' : ''}`}>
-                    <span className="option-left">
-                      <input
-                        type="radio"
-                        checked={selected}
-                        onChange={() => saveAnswer(current.id, idx)}
-                      />
-                    </span>
-                    <span className="option-text">{opt}</span>
-                    <span className="option-number">{idx + 1}</span>
-                  </label>
-                )
-              })}
+              <label className="field-label">Ваш ответ</label>
+              <input
+                type="text"
+                className="short-answer-input"
+                placeholder="Введите ответ без пробелов"
+                value={state.answers[current.id] || ''}
+                onChange={(e) => saveAnswer(current.id, e.target.value)}
+              />
+              <div className="hint-box">Проверка в конце экзамена. Допустим только краткий ответ без пробелов.</div>
             </div>
           )}
 
