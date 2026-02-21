@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class RegisterIn(BaseModel):
@@ -8,18 +8,6 @@ class RegisterIn(BaseModel):
     phone: str = Field(min_length=5, max_length=32)
     faculty: str = Field(min_length=1, max_length=255)
     password: str = Field(min_length=8, max_length=128)
-
-
-class LoginIn(BaseModel):
-    phone: str | None = Field(default=None, min_length=5, max_length=32)
-    login: str | None = Field(default=None, min_length=1, max_length=255)
-    password: str = Field(min_length=1, max_length=128)
-
-    @model_validator(mode="after")
-    def check_identity(self):
-        if bool(self.phone) == bool(self.login):
-            raise ValueError("Provide exactly one of phone or login")
-        return self
 
 
 class TokenOut(BaseModel):

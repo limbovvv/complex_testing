@@ -88,6 +88,18 @@ export default function AdminPage() {
     load()
   }
 
+  const formatTimeLeft = (seconds: number) => {
+    const s = Math.max(0, Number(seconds || 0))
+    const m = Math.floor(s / 60).toString().padStart(2, '0')
+    const ss = Math.floor(s % 60).toString().padStart(2, '0')
+    return `${m}:${ss}`
+  }
+
+  useEffect(() => {
+    const timer = window.setInterval(() => { load() }, 5000)
+    return () => window.clearInterval(timer)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   if (error) return <div className="admin-wrapper"><div className="admin-page"><div className="admin-error">{error}</div></div></div>
 
   const currentQuestions = activeTab === 'math' ? mathQuestions : ruQuestions
@@ -232,7 +244,19 @@ export default function AdminPage() {
                 <span className={`badge ${a.status === 'timed_out' ? 'hidden' : 'visible'}`}>{statusLabel[a.status] || a.status}</span>
                 <span>#{a.attempt_id} · {a.full_name || a.email}{a.faculty ? ` (${a.faculty})` : ''}</span>
               </div>
-              <span>Баллы: {a.score_total ?? '-'} · мат: {a.score_blocks?.math ?? 0}, рус: {a.score_blocks?.ru ?? 0}, инф: {a.score_blocks?.prog ?? 0}</span>
+              <span>
+                Прогресс: {a.progress?.completed ?? 0}/{a.progress?.total ?? 0}
+                {' · '}
+                мат: {a.progress?.math_done ?? 0}/{a.progress?.math_total ?? 0}
+                {', '}
+                рус: {a.progress?.ru_done ?? 0}/{a.progress?.ru_total ?? 0}
+                {', '}
+                инф: {a.progress?.prog_done ?? 0}/{a.progress?.prog_total ?? 0}
+                {' · '}
+                Осталось: {a.status === 'in_progress' ? formatTimeLeft(a.time_left_seconds) : '00:00'}
+                {' · '}
+                Баллы: {a.score_total ?? '-'}
+              </span>
             </div>
           ))}
         </div>

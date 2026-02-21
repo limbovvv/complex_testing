@@ -51,7 +51,7 @@ export default function ResultPage() {
 
   function acknowledge() {
     clearAuth()
-    navigate('/login')
+    navigate('/user')
   }
 
   if (!result || !state) return <div className="result-page"><div className="wait-box">{loadingText}</div></div>

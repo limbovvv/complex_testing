@@ -30,7 +30,7 @@ export default function ExamPage() {
 
   const requireAuth = (message = 'Требуется вход') => {
     setError(message)
-    navigate('/login')
+    navigate('/user')
   }
 
   async function loadState() {

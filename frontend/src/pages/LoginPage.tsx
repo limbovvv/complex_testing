@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, setIsAdmin, setToken } from '../api/client'
+import { apiFetch, setToken } from '../api/client'
 import '../styles/login.css'
 
 export default function LoginPage() {
-  const [isRegister, setIsRegister] = useState(true)
   const [lastName, setLastName] = useState('')
   const [firstName, setFirstName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [phone, setPhone] = useState('')
-  const [identifier, setIdentifier] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -20,34 +18,22 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const path = isRegister ? '/auth/register' : '/auth/login'
-      const payload = isRegister
-        ? {
-            last_name: lastName,
-            first_name: firstName,
-            middle_name: middleName || null,
-            phone,
-            faculty,
-            password
-          }
-        : (phone ? { phone, password } : { login: identifier, password })
-      const data = await apiFetch(path, {
+      const data = await apiFetch('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          last_name: lastName,
+          first_name: firstName,
+          middle_name: middleName || null,
+          phone,
+          faculty,
+          password,
+        })
       })
       setToken(data.access_token)
-      const me = await apiFetch('/auth/me')
-      setIsAdmin(!!me?.is_admin)
-      if (me?.is_admin) {
-        navigate('/admin')
-        return
-      }
-      if (isRegister) {
-        try {
-          await apiFetch('/exam/start', { method: 'POST' })
-        } catch (_) {
-          // Ignore: if attempt already exists, user will still open /exam.
-        }
+      try {
+        await apiFetch('/exam/start', { method: 'POST' })
+      } catch (_) {
+        // If attempt already exists, just open the exam.
       }
       navigate('/exam')
     } catch (e: any) {
@@ -68,35 +54,20 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <h1>Комплексное тестирование</h1>
-        <p className="lead">Чтобы начать тестирование, пройдите регистрацию или войдите в аккаунт.</p>
-        <p className="mode">{isRegister ? 'Регистрация' : 'Вход'}</p>
-        {isRegister && (
-          <>
-            <input placeholder="Фамилия" value={lastName} onChange={e => setLastName(e.target.value)} />
-            <input placeholder="Имя" value={firstName} onChange={e => setFirstName(e.target.value)} />
-            <input placeholder="Отчество (если есть)" value={middleName} onChange={e => setMiddleName(e.target.value)} />
-            <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
-            <input placeholder="Пароль (минимум 8 символов)" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-            <select value={faculty} onChange={e => setFaculty(e.target.value)}>
-              <option value="Факультет связи и автоматизированное управление войсками">
-                Факультет связи и автоматизированное управление войсками
-              </option>
-            </select>
-          </>
-        )}
-        {!isRegister && (
-          <>
-            <input placeholder="Номер телефона (пользователь)" value={phone} onChange={e => setPhone(e.target.value)} />
-            <div className="admin-hint">Для входа администратора оставьте поле телефона пустым и укажите email из БД.</div>
-            <input placeholder="Логин (email)" value={identifier} onChange={e => setIdentifier(e.target.value)} />
-            <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-          </>
-        )}
+        <p className="lead">Введите данные и начните тестирование.</p>
+        <p className="mode">Регистрация участника</p>
+        <input placeholder="Фамилия" value={lastName} onChange={e => setLastName(e.target.value)} />
+        <input placeholder="Имя" value={firstName} onChange={e => setFirstName(e.target.value)} />
+        <input placeholder="Отчество (если есть)" value={middleName} onChange={e => setMiddleName(e.target.value)} />
+        <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
+        <input placeholder="Пароль (минимум 8 символов)" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+        <select value={faculty} onChange={e => setFaculty(e.target.value)}>
+          <option value="Факультет связи и автоматизированное управление войсками">
+            Факультет связи и автоматизированное управление войсками
+          </option>
+        </select>
         {error && <div className="error">{error}</div>}
-        <button onClick={submit} disabled={loading}>{loading ? 'Подождите...' : (isRegister ? 'Зарегистрироваться' : 'Войти')}</button>
-        <button className="link" onClick={() => setIsRegister(v => !v)} disabled={loading}>
-          {isRegister ? 'Уже есть аккаунт' : 'Создать аккаунт'}
-        </button>
+        <button onClick={submit} disabled={loading}>{loading ? 'Подождите...' : 'Начать тестирование'}</button>
       </div>
     </div>
   )
