@@ -48,28 +48,30 @@ export default function AdminLoginPage() {
         <h1>Админ-панель</h1>
         <p className="lead">Войдите под учетной записью администратора из базы данных.</p>
         <p className="mode">Вход администратора</p>
-        <input placeholder="Логин администратора" value={login} onChange={e => setLogin(e.target.value)} />
+        <form onSubmit={(e) => { e.preventDefault(); submit() }}>
+          <input placeholder="Логин администратора" value={login} onChange={e => setLogin(e.target.value)} />
 
-        <div className="password-wrap">
-          <input
-            placeholder="Пароль"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            className="eye-btn"
-            onClick={() => setShowPassword(v => !v)}
-            aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-            title={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-          >
-            👁
-          </button>
-        </div>
+          <div className="password-wrap">
+            <input
+              placeholder="Пароль"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(v => !v)}
+              aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+              title={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+            >
+              👁
+            </button>
+          </div>
 
-        {error && <div className="error">{error}</div>}
-        <button onClick={submit} disabled={loading}>{loading ? 'Подождите...' : 'Войти в админку'}</button>
+          {error && <div className="error">{error}</div>}
+          <button type="submit" disabled={loading}>{loading ? 'Подождите...' : 'Войти в админку'}</button>
+        </form>
       </div>
     </div>
   )
