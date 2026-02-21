@@ -12,6 +12,12 @@ from app.schemas.prog import ProgTaskIn, ProgTaskOut, ProgTestcaseIn, ProgTestca
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_admin_user)])
 
 
+def _utc(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
 @router.get("/questions", response_model=list[QuestionOut])
 async def list_questions(session: AsyncSession = Depends(get_session)):
     res = await session.execute(select(Question))
@@ -247,7 +253,7 @@ async def attempts(session: AsyncSession = Depends(get_session)):
 
         time_left_seconds = 0
         if attempt.status == "in_progress":
-            time_left_seconds = max(0, int((attempt.ends_at - now).total_seconds()))
+            time_left_seconds = max(0, int((_utc(attempt.ends_at) - now).total_seconds()))
 
         out.append(
             {

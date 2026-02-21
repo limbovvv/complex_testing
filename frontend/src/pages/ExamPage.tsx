@@ -16,6 +16,11 @@ type ExamState = {
   drafts: Record<string, { language: string, code: string }>
 }
 
+function parseServerDate(value: string) {
+  const hasTimezone = /(?:[zZ]|[+-]\d{2}:\d{2})$/.test(value)
+  return new Date(hasTimezone ? value : `${value}Z`)
+}
+
 export default function ExamPage() {
   const [state, setState] = useState<ExamState | null>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -54,7 +59,7 @@ export default function ExamPage() {
     if (!state) return
     const interval = setInterval(() => {
       const now = Date.now()
-      const end = new Date(state.ends_at).getTime()
+      const end = parseServerDate(state.ends_at).getTime()
       const diff = Math.max(0, end - now)
       const m = Math.floor(diff / 60000)
       const s = Math.floor((diff % 60000) / 1000)

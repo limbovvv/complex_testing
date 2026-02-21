@@ -12,6 +12,12 @@ from app.worker.celery_app import celery_app
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 
+def _utc(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
 def _normalize_answer(value: str | None) -> str | None:
     if value is None:
         return None
@@ -46,7 +52,8 @@ async def get_state(current=Depends(get_current_user), session: AsyncSession = D
     if not attempt:
         raise HTTPException(status_code=404, detail="Attempt not found")
     now = datetime.now(timezone.utc)
-    if attempt.status == "in_progress" and now >= attempt.ends_at:
+    attempt_ends_at = _utc(attempt.ends_at)
+    if attempt.status == "in_progress" and now >= attempt_ends_at:
         attempt.status = "timed_out"
         attempt.submitted_at = now
         await session.commit()
@@ -106,7 +113,7 @@ async def _check_attempt_open(session: AsyncSession, attempt: ExamAttempt):
     now = datetime.now(timezone.utc)
     if attempt.status != "in_progress":
         raise HTTPException(status_code=400, detail="Attempt is closed")
-    if now >= attempt.ends_at:
+    if now >= _utc(attempt.ends_at):
         attempt.status = "timed_out"
         attempt.submitted_at = now
         await session.commit()
