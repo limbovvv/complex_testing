@@ -1,14 +1,15 @@
-from pydantic import BaseModel
+from typing import Literal
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 
 class AnswerIn(BaseModel):
-    answer_text: str | None
+    answer_text: str | None = Field(default=None, max_length=255)
 
 
 class DraftIn(BaseModel):
-    language: str
-    code: str
+    language: Literal["python", "cpp", "node"]
+    code: str = Field(max_length=100000)
 
 
 class ExamStateOut(BaseModel):

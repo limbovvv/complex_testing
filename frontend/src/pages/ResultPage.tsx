@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch } from '../api/client'
+import { apiFetch, clearAuth } from '../api/client'
 import '../styles/result.css'
 
 type Result = {
@@ -50,7 +50,7 @@ export default function ResultPage() {
   }, [])
 
   function acknowledge() {
-    localStorage.removeItem('token')
+    clearAuth()
     navigate('/login')
   }
 

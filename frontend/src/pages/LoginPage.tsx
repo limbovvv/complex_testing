@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, setToken } from '../api/client'
+import { apiFetch, setIsAdmin, setToken } from '../api/client'
 import '../styles/login.css'
 
 export default function LoginPage() {
@@ -9,9 +9,9 @@ export default function LoginPage() {
   const [firstName, setFirstName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [phone, setPhone] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
-  const [login, setLogin] = useState('admin')
-  const [password, setPassword] = useState('admin')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -27,15 +27,17 @@ export default function LoginPage() {
             first_name: firstName,
             middle_name: middleName || null,
             phone,
-            faculty
+            faculty,
+            password
           }
-        : (phone ? { phone } : { login, password })
+        : (phone ? { phone, password } : { login: identifier, password })
       const data = await apiFetch(path, {
         method: 'POST',
         body: JSON.stringify(payload)
       })
       setToken(data.access_token)
       const me = await apiFetch('/auth/me')
+      setIsAdmin(!!me?.is_admin)
       if (me?.is_admin) {
         navigate('/admin')
         return
@@ -74,6 +76,7 @@ export default function LoginPage() {
             <input placeholder="Имя" value={firstName} onChange={e => setFirstName(e.target.value)} />
             <input placeholder="Отчество (если есть)" value={middleName} onChange={e => setMiddleName(e.target.value)} />
             <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
+            <input placeholder="Пароль (минимум 8 символов)" type="password" value={password} onChange={e => setPassword(e.target.value)} />
             <select value={faculty} onChange={e => setFaculty(e.target.value)}>
               <option value="Факультет связи и автоматизированное управление войсками">
                 Факультет связи и автоматизированное управление войсками
@@ -83,10 +86,10 @@ export default function LoginPage() {
         )}
         {!isRegister && (
           <>
-            <input placeholder="Номер телефона (для пользователя)" value={phone} onChange={e => setPhone(e.target.value)} />
-            <div className="admin-hint">Для администратора: логин <b>admin</b>, пароль <b>admin</b></div>
-            <input placeholder="Логин администратора" value={login} onChange={e => setLogin(e.target.value)} />
-            <input placeholder="Пароль администратора" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+            <input placeholder="Номер телефона (пользователь)" value={phone} onChange={e => setPhone(e.target.value)} />
+            <div className="admin-hint">Для входа администратора оставьте поле телефона пустым и укажите логин.</div>
+            <input placeholder="Логин (например: admin или email)" value={identifier} onChange={e => setIdentifier(e.target.value)} />
+            <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
           </>
         )}
         {error && <div className="error">{error}</div>}

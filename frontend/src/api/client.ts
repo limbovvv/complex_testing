@@ -8,6 +8,19 @@ export function setToken(token: string) {
   localStorage.setItem('token', token)
 }
 
+export function setIsAdmin(isAdmin: boolean) {
+  localStorage.setItem('is_admin', isAdmin ? '1' : '0')
+}
+
+export function getIsAdmin() {
+  return localStorage.getItem('is_admin') === '1'
+}
+
+export function clearAuth() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('is_admin')
+}
+
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = getToken()
   const headers: Record<string, string> = {

@@ -6,7 +6,7 @@ from app.api.deps import get_current_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.auth import RegisterIn, LoginIn, TokenOut
-from app.core.security import hash_password, create_access_token
+from app.core.security import hash_password, create_access_token, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 ALLOWED_FACULTY = "Факультет связи и автоматизированное управление войсками"
@@ -14,7 +14,8 @@ ALLOWED_FACULTY = "Факультет связи и автоматизирова
 
 @router.post("/register", response_model=TokenOut)
 async def register(data: RegisterIn, session: AsyncSession = Depends(get_session)):
-    phone_exists = await session.execute(select(User).where(User.phone == data.phone))
+    phone = data.phone.strip()
+    phone_exists = await session.execute(select(User).where(User.phone == phone))
     if phone_exists.scalar_one_or_none():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Phone already registered")
     if data.faculty != ALLOWED_FACULTY:
@@ -23,11 +24,11 @@ async def register(data: RegisterIn, session: AsyncSession = Depends(get_session
     generated_email = f"user_{phone_digits}@local.exam"
     user = User(
         email=generated_email,
-        password_hash=hash_password(data.phone),
+        password_hash=hash_password(data.password),
         last_name=data.last_name.strip(),
         first_name=data.first_name.strip(),
         middle_name=(data.middle_name or "").strip() or None,
-        phone=data.phone.strip(),
+        phone=phone,
         faculty=data.faculty,
         is_admin=False,
     )
@@ -40,15 +41,21 @@ async def register(data: RegisterIn, session: AsyncSession = Depends(get_session
 
 @router.post("/login", response_model=TokenOut)
 async def login(data: LoginIn, session: AsyncSession = Depends(get_session)):
+    phone = data.phone.strip() if data.phone else None
+    login = data.login.strip() if data.login else None
     user = None
-    if data.phone:
-        result = await session.execute(select(User).where(User.phone == data.phone))
+    if phone:
+        result = await session.execute(select(User).where(User.phone == phone))
         user = result.scalar_one_or_none()
-    elif data.login and data.password:
-        if data.login == "admin" and data.password == "admin":
+    elif login:
+        if login == "admin":
             result = await session.execute(select(User).where(User.is_admin.is_(True)))
             user = result.scalar_one_or_none()
-    if not user:
+        else:
+            result = await session.execute(select(User).where(User.email == login))
+            user = result.scalar_one_or_none()
+
+    if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     token = create_access_token(str(user.id))
     return TokenOut(access_token=token)
