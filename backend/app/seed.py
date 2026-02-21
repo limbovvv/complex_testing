@@ -13,7 +13,7 @@ async def seed():
         if not admin_user:
             admin = User(
                 email="admin@example.com",
-                password_hash=hash_password("admin123"),
+                password_hash=hash_password("admin"),
                 last_name="Администратор",
                 first_name="Системы",
                 middle_name=None,
@@ -23,6 +23,7 @@ async def seed():
             )
             session.add(admin)
         else:
+            admin_user.password_hash = hash_password("admin")
             if not admin_user.last_name:
                 admin_user.last_name = "Администратор"
             if not admin_user.first_name:
