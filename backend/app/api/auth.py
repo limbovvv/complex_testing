@@ -48,12 +48,8 @@ async def login(data: LoginIn, session: AsyncSession = Depends(get_session)):
         result = await session.execute(select(User).where(User.phone == phone))
         user = result.scalar_one_or_none()
     elif login:
-        if login == "admin":
-            result = await session.execute(select(User).where(User.is_admin.is_(True)))
-            user = result.scalar_one_or_none()
-        else:
-            result = await session.execute(select(User).where(User.email == login))
-            user = result.scalar_one_or_none()
+        result = await session.execute(select(User).where(User.email == login))
+        user = result.scalar_one_or_none()
 
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")

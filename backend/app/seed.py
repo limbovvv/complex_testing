@@ -23,7 +23,6 @@ async def seed():
             )
             session.add(admin)
         else:
-            admin_user.password_hash = hash_password("admin")
             if not admin_user.last_name:
                 admin_user.last_name = "Администратор"
             if not admin_user.first_name:

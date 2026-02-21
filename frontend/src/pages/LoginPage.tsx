@@ -87,8 +87,8 @@ export default function LoginPage() {
         {!isRegister && (
           <>
             <input placeholder="Номер телефона (пользователь)" value={phone} onChange={e => setPhone(e.target.value)} />
-            <div className="admin-hint">Для входа администратора оставьте поле телефона пустым и укажите логин.</div>
-            <input placeholder="Логин (например: admin или email)" value={identifier} onChange={e => setIdentifier(e.target.value)} />
+            <div className="admin-hint">Для входа администратора оставьте поле телефона пустым и укажите email из БД.</div>
+            <input placeholder="Логин (email)" value={identifier} onChange={e => setIdentifier(e.target.value)} />
             <input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
           </>
         )}
