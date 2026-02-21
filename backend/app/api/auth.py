@@ -5,8 +5,8 @@ from sqlalchemy import select
 from app.api.deps import get_current_user
 from app.db.session import get_session
 from app.models.user import User
-from app.schemas.auth import RegisterIn, TokenOut
-from app.core.security import hash_password, create_access_token
+from app.schemas.auth import RegisterIn, LoginIn, TokenOut
+from app.core.security import hash_password, create_access_token, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 ALLOWED_FACULTY = "Факультет связи и автоматизированное управление войсками"
@@ -35,6 +35,17 @@ async def register(data: RegisterIn, session: AsyncSession = Depends(get_session
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    token = create_access_token(str(user.id))
+    return TokenOut(access_token=token)
+
+
+@router.post("/login", response_model=TokenOut)
+async def login(data: LoginIn, session: AsyncSession = Depends(get_session)):
+    login = data.login.strip()
+    result = await session.execute(select(User).where(User.email == login, User.is_admin.is_(True)))
+    user = result.scalar_one_or_none()
+    if not user or not verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid admin credentials")
     token = create_access_token(str(user.id))
     return TokenOut(access_token=token)
 

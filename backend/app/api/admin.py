@@ -3,12 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_admin_user
 from app.db.session import get_session
 from app.models import Question, ProgTask, ProgTestcase, ExamAttempt, AttemptAnswer, AttemptProg, User
 from app.schemas.question import QuestionIn, QuestionOut
 from app.schemas.prog import ProgTaskIn, ProgTaskOut, ProgTestcaseIn, ProgTestcaseOut
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_admin_user)])
 
 
 @router.get("/questions", response_model=list[QuestionOut])

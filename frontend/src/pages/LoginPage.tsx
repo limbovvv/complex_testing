@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, setToken } from '../api/client'
+import { apiFetch, setIsAdmin, setToken } from '../api/client'
 import '../styles/login.css'
 
 export default function LoginPage() {
@@ -30,6 +30,7 @@ export default function LoginPage() {
         })
       })
       setToken(data.access_token)
+      setIsAdmin(false)
       try {
         await apiFetch('/exam/start', { method: 'POST' })
       } catch (_) {
