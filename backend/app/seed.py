@@ -8,11 +8,11 @@ from app.core.security import hash_password
 
 async def seed():
     async with AsyncSessionLocal() as session:
-        res = await session.execute(select(User).where(User.email == "admin@example.com"))
+        res = await session.execute(select(User).where(User.is_admin.is_(True)))
         admin_user = res.scalar_one_or_none()
         if not admin_user:
             admin = User(
-                email="admin@example.com",
+                email="admin",
                 password_hash=hash_password("admin"),
                 last_name="Администратор",
                 first_name="Системы",
@@ -23,6 +23,8 @@ async def seed():
             )
             session.add(admin)
         else:
+            admin_user.email = "admin"
+            admin_user.password_hash = hash_password("admin")
             if not admin_user.last_name:
                 admin_user.last_name = "Администратор"
             if not admin_user.first_name:

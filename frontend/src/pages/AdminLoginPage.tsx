@@ -4,7 +4,7 @@ import { apiFetch, setIsAdmin, setToken } from '../api/client'
 import '../styles/login.css'
 
 export default function AdminLoginPage() {
-  const [login, setLogin] = useState('admin@example.com')
+  const [login, setLogin] = useState('admin')
   const [password, setPassword] = useState('admin')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
         <h1>Админ-панель</h1>
         <p className="lead">Войдите под учетной записью администратора из базы данных.</p>
         <p className="mode">Вход администратора</p>
-        <input placeholder="Email администратора" value={login} onChange={e => setLogin(e.target.value)} />
+        <input placeholder="Логин администратора" value={login} onChange={e => setLogin(e.target.value)} />
 
         <div className="password-wrap">
           <input
