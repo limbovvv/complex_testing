@@ -9,13 +9,21 @@ export default function LoginPage() {
   const [middleName, setMiddleName] = useState('')
   const [phone, setPhone] = useState('')
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
+  function isValidPhone(value: string) {
+    const normalized = value.replace(/[^\d+]/g, '')
+    return /^\+?\d{10,15}$/.test(normalized)
+  }
+
   async function submit() {
     setError('')
+    if (!isValidPhone(phone)) {
+      setError('Неправильный номер телефона')
+      return
+    }
     setLoading(true)
     try {
       const data = await apiFetch('/auth/register', {
@@ -26,7 +34,6 @@ export default function LoginPage() {
           middle_name: middleName || null,
           phone,
           faculty,
-          password,
         })
       })
       setToken(data.access_token)
@@ -61,7 +68,6 @@ export default function LoginPage() {
         <input placeholder="Имя" value={firstName} onChange={e => setFirstName(e.target.value)} />
         <input placeholder="Отчество (если есть)" value={middleName} onChange={e => setMiddleName(e.target.value)} />
         <input placeholder="Номер телефона" value={phone} onChange={e => setPhone(e.target.value)} />
-        <input placeholder="Пароль (минимум 8 символов)" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <select value={faculty} onChange={e => setFaculty(e.target.value)}>
           <option value="Факультет связи и автоматизированное управление войсками">
             Факультет связи и автоматизированное управление войсками

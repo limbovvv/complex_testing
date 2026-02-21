@@ -15,6 +15,9 @@ ALLOWED_FACULTY = "Факультет связи и автоматизирова
 @router.post("/register", response_model=TokenOut)
 async def register(data: RegisterIn, session: AsyncSession = Depends(get_session)):
     phone = data.phone.strip()
+    normalized_phone = "".join(ch for ch in phone if ch.isdigit())
+    if len(normalized_phone) < 10 or len(normalized_phone) > 15:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Неправильный номер телефона")
     phone_exists = await session.execute(select(User).where(User.phone == phone))
     if phone_exists.scalar_one_or_none():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Phone already registered")
@@ -24,7 +27,8 @@ async def register(data: RegisterIn, session: AsyncSession = Depends(get_session
     generated_email = f"user_{phone_digits}@local.exam"
     user = User(
         email=generated_email,
-        password_hash=hash_password(data.password),
+        # User password is not requested in UI, so keep a deterministic local hash.
+        password_hash=hash_password(phone),
         last_name=data.last_name.strip(),
         first_name=data.first_name.strip(),
         middle_name=(data.middle_name or "").strip() or None,
