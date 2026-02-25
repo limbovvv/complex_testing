@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { apiFetch, setIsAdmin, setToken } from '../api/client'
 import '../styles/login.css'
 
@@ -9,7 +8,6 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
 
   async function submit() {
     setError('')
@@ -27,7 +25,7 @@ export default function AdminLoginPage() {
         return
       }
       setIsAdmin(true)
-      navigate('/admin-panel')
+      window.location.assign('/admin-panel')
     } catch (e: any) {
       let message = e.message || 'Ошибка входа'
       try {

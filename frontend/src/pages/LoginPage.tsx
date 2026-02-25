@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { apiFetch, setIsAdmin, setToken } from '../api/client'
 import '../styles/login.css'
 
@@ -11,7 +10,6 @@ export default function LoginPage() {
   const [faculty, setFaculty] = useState('Факультет связи и автоматизированное управление войсками')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
 
   function isValidPhone(value: string) {
     const normalized = value.replace(/[^\d+]/g, '')
@@ -43,7 +41,7 @@ export default function LoginPage() {
       } catch (_) {
         // If attempt already exists, just open the exam.
       }
-      navigate('/exam')
+      window.location.assign('/exam')
     } catch (e: any) {
       let message = e.message || 'Ошибка'
       try {
