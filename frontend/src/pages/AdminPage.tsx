@@ -12,9 +12,10 @@ export default function AdminPage() {
   const [attempts, setAttempts] = useState<any[]>([])
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<SubjectTab>('math')
+  const [activeVariant, setActiveVariant] = useState<number>(1)
 
-  const [qForm, setQForm] = useState({ subject: 'math', question: '', correct_answer: '', points: 1, published: true })
-  const [tForm, setTForm] = useState({ title: '', statement: '', points: 1, published: true })
+  const [qForm, setQForm] = useState({ subject: 'math', question: '', correct_answer: '', points: 1, variant_no: 1, published: true })
+  const [tForm, setTForm] = useState({ title: '', statement: '', points: 1, variant_no: 1, published: true })
   const [tcForm, setTcForm] = useState({ task_id: 0, input_data: '', output_data: '', is_hidden: false })
   const [selectedTaskId, setSelectedTaskId] = useState<number>(0)
 
@@ -24,13 +25,21 @@ export default function AdminPage() {
     timed_out: 'Время вышло'
   }
 
-  const mathQuestions = useMemo(() => questions.filter(q => q.subject === 'math'), [questions])
-  const ruQuestions = useMemo(() => questions.filter(q => q.subject === 'ru'), [questions])
-  const selectedTask = useMemo(() => tasks.find(t => t.id === selectedTaskId) || null, [tasks, selectedTaskId])
+  const mathQuestions = useMemo(() => questions.filter(q => q.subject === 'math' && q.variant_no === activeVariant), [questions, activeVariant])
+  const ruQuestions = useMemo(() => questions.filter(q => q.subject === 'ru' && q.variant_no === activeVariant), [questions, activeVariant])
+  const tasksByVariant = useMemo(() => tasks.filter(t => t.variant_no === activeVariant), [tasks, activeVariant])
+  const selectedTask = useMemo(() => tasks.find(t => t.id === selectedTaskId && t.variant_no === activeVariant) || null, [tasks, selectedTaskId, activeVariant])
   const selectedTaskCases = useMemo(
     () => (selectedTaskId ? testcases.filter(tc => tc.task_id === selectedTaskId) : []),
     [testcases, selectedTaskId]
   )
+
+  useEffect(() => {
+    setSelectedTaskId(0)
+    setTcForm(prev => ({ ...prev, task_id: 0 }))
+    setQForm(prev => ({ ...prev, variant_no: activeVariant }))
+    setTForm(prev => ({ ...prev, variant_no: activeVariant }))
+  }, [activeVariant])
 
   async function load() {
     try {
@@ -60,18 +69,22 @@ export default function AdminPage() {
       body: JSON.stringify({
         ...qForm,
         subject,
+        variant_no: activeVariant,
         correct_answer: qForm.correct_answer.trim(),
         options: null,
         correct_index: null,
       })
     })
-    setQForm({ subject, question: '', correct_answer: '', points: 1, published: true })
+    setQForm({ subject, question: '', correct_answer: '', points: 1, variant_no: activeVariant, published: true })
     load()
   }
 
   async function createTask() {
-    const task = await apiFetch('/admin/prog_tasks', { method: 'POST', body: JSON.stringify(tForm) })
-    setTForm({ title: '', statement: '', points: 1, published: true })
+    const task = await apiFetch('/admin/prog_tasks', {
+      method: 'POST',
+      body: JSON.stringify({ ...tForm, variant_no: activeVariant })
+    })
+    setTForm({ title: '', statement: '', points: 1, variant_no: activeVariant, published: true })
     setSelectedTaskId(task.id)
     setTcForm(prev => ({ ...prev, task_id: task.id }))
     load()
@@ -110,6 +123,12 @@ export default function AdminPage() {
       <div className="admin-page">
         <div className="admin-top">
           <h2>Админ-панель</h2>
+          <select value={activeVariant} onChange={e => setActiveVariant(Number(e.target.value))}>
+            <option value={1}>Вариант 1</option>
+            <option value={2}>Вариант 2</option>
+            <option value={3}>Вариант 3</option>
+            <option value={4}>Вариант 4</option>
+          </select>
           <button className="refresh-btn" onClick={load}>Обновить данные</button>
         </div>
 
@@ -183,7 +202,7 @@ export default function AdminPage() {
                   }}
                 >
                   <option value={0}>Выберите задачу</option>
-                  {tasks.map(t => (<option key={t.id} value={t.id}>{t.title}</option>))}
+                  {tasksByVariant.map(t => (<option key={t.id} value={t.id}>{t.title}</option>))}
                 </select>
                 {selectedTask && <div className="hint-box">Выбрана: <b>#{selectedTask.id} {selectedTask.title}</b></div>}
                 <label className="field-label">Входные данные</label>
@@ -204,8 +223,8 @@ export default function AdminPage() {
 
             <div className="section">
               <h3>Список задач</h3>
-              {tasks.length === 0 && <div className="empty">Нет задач</div>}
-              {tasks.map(t => (
+              {tasksByVariant.length === 0 && <div className="empty">Нет задач</div>}
+              {tasksByVariant.map(t => (
                 <div key={t.id} className="row">
                   <div className="row-main">
                     <span className="tag">INF</span>
@@ -242,7 +261,7 @@ export default function AdminPage() {
             <div key={a.attempt_id} className="row">
               <div className="row-main">
                 <span className={`badge ${a.status === 'timed_out' ? 'hidden' : 'visible'}`}>{statusLabel[a.status] || a.status}</span>
-                <span>#{a.attempt_id} · {a.full_name || a.email}{a.faculty ? ` (${a.faculty})` : ''}</span>
+                <span>#{a.attempt_id} · Вариант {a.variant_no ?? 1} · {a.full_name || a.email}{a.faculty ? ` (${a.faculty})` : ''}</span>
               </div>
               <span>
                 Прогресс: {a.progress?.completed ?? 0}/{a.progress?.total ?? 0}

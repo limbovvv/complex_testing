@@ -14,6 +14,7 @@ class DraftIn(BaseModel):
 
 class ExamStateOut(BaseModel):
     attempt_id: int
+    variant_no: int
     status: str
     started_at: datetime
     ends_at: datetime

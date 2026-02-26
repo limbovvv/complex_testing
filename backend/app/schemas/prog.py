@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 class ProgTaskIn(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     statement: str = Field(min_length=1, max_length=20000)
+    variant_no: int = Field(default=1, ge=1, le=4)
     points: int = Field(default=1, ge=1, le=100)
     published: bool = False
 
@@ -12,6 +13,7 @@ class ProgTaskOut(BaseModel):
     id: int
     title: str
     statement: str
+    variant_no: int
     points: int
     published: bool
 

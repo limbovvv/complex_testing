@@ -6,6 +6,7 @@ import '../styles/exam.css'
 
 type ExamState = {
   attempt_id: number
+  variant_no: number
   status: string
   started_at: string
   ends_at: string
@@ -188,6 +189,7 @@ export default function ExamPage() {
   return (
     <div className="exam-layout">
       <div className="topbar">
+        <div className="timer">Вариант: {state.variant_no}</div>
         <div className="timer">Осталось: {timeLeft}</div>
         <div className="autosave">{autosave}</div>
         <button className="submit" onClick={submitExam}>Сдать</button>

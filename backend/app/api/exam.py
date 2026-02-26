@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
+import random
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -30,6 +31,42 @@ async def _get_attempt(session: AsyncSession, user_id: int) -> ExamAttempt | Non
     return result.scalar_one_or_none()
 
 
+async def _pick_variant(session: AsyncSession) -> int:
+    variants: list[int] = []
+    for variant in (1, 2, 3, 4):
+        math_cnt = (
+            await session.execute(
+                select(func.count(Question.id)).where(
+                    Question.subject == "math",
+                    Question.published.is_(True),
+                    Question.variant_no == variant,
+                )
+            )
+        ).scalar() or 0
+        ru_cnt = (
+            await session.execute(
+                select(func.count(Question.id)).where(
+                    Question.subject == "ru",
+                    Question.published.is_(True),
+                    Question.variant_no == variant,
+                )
+            )
+        ).scalar() or 0
+        prog_cnt = (
+            await session.execute(
+                select(func.count(ProgTask.id)).where(
+                    ProgTask.published.is_(True),
+                    ProgTask.variant_no == variant,
+                )
+            )
+        ).scalar() or 0
+        if math_cnt > 0 and ru_cnt > 0 and prog_cnt > 0:
+            variants.append(variant)
+    if not variants:
+        return 1
+    return random.choice(variants)
+
+
 @router.post("/start", response_model=ExamStateOut)
 async def start_exam(current=Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     existing = await _get_attempt(session, current.id)
@@ -38,7 +75,14 @@ async def start_exam(current=Depends(get_current_user), session: AsyncSession = 
 
     now = datetime.now(timezone.utc)
     ends_at = now + timedelta(minutes=60)
-    attempt = ExamAttempt(user_id=current.id, started_at=now, ends_at=ends_at, status="in_progress")
+    variant_no = await _pick_variant(session)
+    attempt = ExamAttempt(
+        user_id=current.id,
+        variant_no=variant_no,
+        started_at=now,
+        ends_at=ends_at,
+        status="in_progress",
+    )
     session.add(attempt)
     await session.commit()
     await session.refresh(attempt)
@@ -59,9 +103,23 @@ async def get_state(current=Depends(get_current_user), session: AsyncSession = D
         await session.commit()
         celery_app.send_task("grade_attempt", args=[attempt.id])
 
-    result_math = await session.execute(select(Question).where(Question.subject == "math", Question.published.is_(True)))
-    result_ru = await session.execute(select(Question).where(Question.subject == "ru", Question.published.is_(True)))
-    result_prog = await session.execute(select(ProgTask).where(ProgTask.published.is_(True)))
+    result_math = await session.execute(
+        select(Question).where(
+            Question.subject == "math",
+            Question.published.is_(True),
+            Question.variant_no == attempt.variant_no,
+        )
+    )
+    result_ru = await session.execute(
+        select(Question).where(
+            Question.subject == "ru",
+            Question.published.is_(True),
+            Question.variant_no == attempt.variant_no,
+        )
+    )
+    result_prog = await session.execute(
+        select(ProgTask).where(ProgTask.published.is_(True), ProgTask.variant_no == attempt.variant_no)
+    )
 
     math_questions = [
         {
@@ -98,6 +156,7 @@ async def get_state(current=Depends(get_current_user), session: AsyncSession = D
 
     return ExamStateOut(
         attempt_id=attempt.id,
+        variant_no=attempt.variant_no,
         status=attempt.status,
         started_at=attempt.started_at,
         ends_at=attempt.ends_at,

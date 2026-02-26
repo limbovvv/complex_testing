@@ -265,6 +265,7 @@ async def attempts(session: AsyncSession = Depends(get_session)):
                 ) or user.email,
                 "faculty": user.faculty,
                 "status": attempt.status,
+                "variant_no": attempt.variant_no,
                 "started_at": attempt.started_at,
                 "ends_at": attempt.ends_at,
                 "submitted_at": attempt.submitted_at,

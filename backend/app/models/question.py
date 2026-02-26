@@ -13,5 +13,6 @@ class Question(Base):
     options: Mapped[list | None] = mapped_column(JSON, nullable=True)
     correct_index: Mapped[int | None] = mapped_column(Integer, nullable=True)
     correct_answer: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    variant_no: Mapped[int] = mapped_column(Integer, default=1, index=True)
     points: Mapped[int] = mapped_column(Integer, default=1)
     published: Mapped[bool] = mapped_column(Boolean, default=False)

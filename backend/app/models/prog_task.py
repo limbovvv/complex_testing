@@ -10,6 +10,7 @@ class ProgTask(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     statement: Mapped[str] = mapped_column(Text)
+    variant_no: Mapped[int] = mapped_column(Integer, default=1, index=True)
     points: Mapped[int] = mapped_column(Integer, default=1)
     published: Mapped[bool] = mapped_column(Boolean, default=False)
 
