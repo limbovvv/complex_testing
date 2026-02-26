@@ -1,0 +1,23 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.egg-info/
+.venv/
+
+# Node
+node_modules/
+
+# Build artifacts
+frontend/dist/
+
+# Local DB
+backend/exam.db
+
+# IDE
+.vscode/
+.idea/
