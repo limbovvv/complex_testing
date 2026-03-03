@@ -1,58 +1,85 @@
-* { box-sizing: border-box; }
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
 
 :root {
-  --bg: #ffffff;
-  --bg-soft: #fff4f4;
-  --text: #1f1f1f;
-  --muted: #6b6b6b;
-  --primary: #cc1f1f;
-  --primary-dark: #a51515;
-  --border: #f0d7d7;
+  --bg: #fff;
+  --bg-soft: #f7f8fb;
+  --bg-panel: #ffffff;
+  --text: #14161a;
+  --muted: #667085;
+  --primary: #d21f2b;
+  --primary-strong: #b3121f;
+  --primary-soft: #ffe8eb;
+  --border: #e6e8ee;
+  --shadow-sm: 0 10px 24px rgba(11, 18, 35, 0.06);
+  --shadow-md: 0 20px 40px rgba(11, 18, 35, 0.1);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-soft);
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
   color: var(--text);
+  background:
+    radial-gradient(1000px 520px at -10% -5%, #ffd8dd 0%, transparent 55%),
+    radial-gradient(900px 460px at 105% -8%, #ffeef0 0%, transparent 60%),
+    var(--bg-soft);
 }
 
 button {
   cursor: pointer;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-panel);
   color: var(--text);
   border-radius: 12px;
   padding: 10px 14px;
-  font-weight: 600;
-  transition: all 0.15s ease;
+  font: 700 14px/1.1 inherit;
+  transition: 0.2s ease;
 }
 
 button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
-  box-shadow: none;
+  opacity: 0.6;
   transform: none;
+  box-shadow: none;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
-  padding: 10px 12px;
   margin: 6px 0;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   color: var(--text);
-  font: inherit;
+  font: 500 15px/1.35 inherit;
+  padding: 11px 12px;
+  transition: 0.18s ease;
 }
 
-input:focus, textarea:focus, select:focus {
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(204, 31, 31, 0.12);
+  box-shadow: 0 0 0 4px rgba(210, 31, 43, 0.12);
 }

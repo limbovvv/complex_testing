@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: docker.io/library/postgres:16-alpine
     container_name: entrance_exam_postgres
     restart: unless-stopped
     environment:
@@ -18,7 +18,7 @@ services:
       retries: 20
 
   redis:
-    image: redis:7-alpine
+    image: docker.io/library/redis:7-alpine
     container_name: entrance_exam_redis
     restart: unless-stopped
     ports:
@@ -30,6 +30,7 @@ services:
       retries: 20
 
   backend:
+    image: entrance_exam_backend:local
     build:
       context: ./backend
     container_name: entrance_exam_backend
@@ -46,8 +47,7 @@ services:
     command: ["/app/entrypoint.sh"]
 
   worker:
-    build:
-      context: ./backend
+    image: entrance_exam_backend:local
     container_name: entrance_exam_worker
     restart: unless-stopped
     env_file:
@@ -58,8 +58,6 @@ services:
       redis:
         condition: service_healthy
     command: ["/app/worker_entrypoint.sh"]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
   frontend:
     build:

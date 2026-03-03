@@ -3,72 +3,88 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 24px;
-  background: radial-gradient(circle at top, #ffe6e6 0%, #ffffff 55%);
+  padding: 28px;
 }
 
 .login-card {
-  background: #fff;
-  padding: 34px;
-  border-radius: 18px;
-  width: 440px;
+  position: relative;
+  background: var(--bg-panel);
+  padding: 34px 30px;
+  border-radius: 24px;
+  width: min(480px, 100%);
   border: 1px solid var(--border);
-  box-shadow: 0 18px 38px rgba(180, 20, 20, 0.09);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 8px;
+  background: linear-gradient(90deg, #d21f2b 0%, #ef3e49 100%);
 }
 
 .login-card h1 {
-  margin: 0 0 10px;
-  color: var(--primary-dark);
-  font-size: 32px;
+  margin: 8px 0 8px;
+  color: #9e0f1a;
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
 }
 
 .login-card .lead {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   color: var(--muted);
-  line-height: 1.42;
+  line-height: 1.5;
 }
 
 .login-card .mode {
   margin: 0 0 10px;
-  color: var(--primary-dark);
+  color: #a2101d;
   font-weight: 700;
+  font-size: 15px;
 }
 
 .login-card .admin-hint {
-  margin-top: 8px;
-  color: var(--primary-dark);
+  margin: 6px 0 10px;
+  color: #a2101d;
   font-size: 13px;
-  background: #fff7f7;
-  border: 1px solid var(--border);
+  background: var(--primary-soft);
+  border: 1px solid #f6cfd3;
   padding: 8px 10px;
   border-radius: 10px;
 }
 
 .login-card .error {
-  color: var(--primary);
-  margin: 8px 0;
+  color: #b3121f;
+  margin: 10px 0 6px;
   font-weight: 600;
 }
 
 .login-card button {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 12px;
+  min-height: 46px;
 }
 
 .login-card button:not(.link) {
-  background: var(--primary);
+  background: linear-gradient(135deg, #d21f2b 0%, #b3121f 100%);
   color: #fff;
-  border-color: var(--primary);
+  border-color: #c01724;
 }
 
 .login-card button:not(.link):hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
+  background: linear-gradient(135deg, #b3121f 0%, #930f18 100%);
+  border-color: #930f18;
 }
 
 .login-card .link {
   background: #fff;
-  color: var(--primary-dark);
+  color: #a2101d;
   border-color: var(--border);
 }
 
@@ -82,16 +98,31 @@
 
 .login-card .eye-btn {
   position: absolute;
-  right: 6px;
+  right: 7px;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   margin: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
-  background: #fff;
-  color: var(--primary-dark);
+  background: #f9fafb;
+  color: #a2101d;
   line-height: 1;
   padding: 0;
+}
+
+@media (max-width: 640px) {
+  .login-page {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+
+  .login-card h1 {
+    font-size: clamp(30px, 10vw, 38px);
+  }
 }
