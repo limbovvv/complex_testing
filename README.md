@@ -1,42 +1,77 @@
-# Entrance Exam (Docker + PostgreSQL)
+# Entrance Exam (Podman + PostgreSQL + Redis + FastAPI + Vite)
 
-## Quick start
+Проект поднимается через `Podman` (`docker` не требуется).
 
-1. Create env file:
+## 1) Подготовка `.env`
+
+Linux/macOS:
 
 ```bash
 cp .env.example .env
 ```
 
-2. Build and start all services:
+Windows PowerShell:
 
-```bash
-docker compose up -d --build
+```powershell
+Copy-Item .env.example .env
 ```
 
-3. Open:
+## 2) Запуск (Linux/macOS/Windows)
 
-- User page: http://localhost:5173/user
-- Admin login: http://localhost:5173/admin-login
-- Admin panel: http://localhost:5173/admin-panel
-- API docs: http://localhost:8000/docs
-
-4. Stop services:
+Основной способ:
 
 ```bash
-docker compose down
+podman-compose up -d --build
+```
+На Windows используйте Podman Desktop + PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+podman-compose up -d --build
 ```
 
-5. Stop and remove DB volume too:
+## 4) Проверка
+
+Откройте:
+
+- User page: `http://localhost:5173/user`
+- Admin login: `http://localhost:5173/admin-login`
+- Admin panel: `http://localhost:5173/admin-panel`
+- API docs: `http://localhost:8000/docs`
+
+Проверка контейнеров:
 
 ```bash
-docker compose down -v
+podman ps
+```
+
+## 5) Остановка
+
+Podman:
+
+```bash
+podman-compose down
+```
+
+С удалением volume базы:
+
+```bash
+podman-compose down -v
+```
+
+## 6) Если был конфликт имен контейнеров
+
+Иногда `up` может ругаться, что имя контейнера уже занято. Выполните:
+
+```bash
+podman-compose down
+podman-compose up -d
 ```
 
 ## Services
 
 - `postgres` - PostgreSQL 16
-- `redis` - broker/result backend for Celery
-- `backend` - FastAPI API + migrations + seed
+- `redis` - Redis 7 (broker/result backend для Celery)
+- `backend` - FastAPI + Alembic migrations + seed
 - `worker` - Celery worker
-- `frontend` - Vite frontend
+- `frontend` - Vite (React)
